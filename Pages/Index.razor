@@ -1,0 +1,292 @@
+﻿@page "/"
+@inject IJSRuntime JS
+
+
+
+
+<section class="feature-section">
+    <div class="feature-container">
+        <!-- 左侧文字 -->
+        <div class="feature-text">
+            @* <span class="feature-tag">EXCHANGE DESIGN DATA</span> *@
+            <h2>"让您的软件，<br />———不止于设计</h2>
+            <p>
+                Make your models flow effortlessly through meaningful data exchange
+                across all popular CAD & BIM tools.
+            </p>
+            <a href="#" class="feature-btn">如何作业</a>
+
+            <hr />
+
+            <blockquote>
+                <p>"Modelers reduced their delivery time from 9 days to 12 minutes thanks to Snail."</p>
+                <div class="testimonial">
+                    <img src="images/3合1.png" alt="User" />
+                    <div>
+                        <strong>Benedetta Ravicchio</strong><br />
+                        <span>Senior Computational Designer - Arup</span>
+                    </div>
+                </div>
+            </blockquote>
+        </div>
+
+        <div class="image-stack">
+            <img src="images/img1.png" alt="Image 1" class="stack-img img1" />
+            <img src="images/img2.png" alt="Image 2" class="stack-img img2" />
+            <img src="images/img3.png" alt="Image 3" class="stack-img img3" />
+        </div>
+
+
+    </div>
+</section>
+
+
+
+
+
+
+<section class="bim-data-section" style="height:380px">
+    <div class="bim-text">
+        <span class="bim-tag">三鑫 BIM 数据引擎</span>
+        <h2>“数据驱动,设计更有温度”</h2>
+        <h1 style="color: gray">实现跨平台数据扭转与复用</h1>
+        @* <ul>
+            <li>✔ Rhino ↔ Revit 双向互通</li>
+            <li>✔ CAD 参数快速更新</li>
+            <li>✔ 数据驱动图纸智能生成</li>
+        </ul> *@
+        @*  <a href="#" class="bim-btn">了解更多</a> *@
+        @*  <blockquote style="color:gray">
+            “我们的设计和加工不再割裂，所有环节共享一套真实数据”
+        </blockquote>
+        <span style="color:gray ;text-align:right;">-------------------------------------------------- 三鑫研发团队</span> *@
+    </div>
+
+    <div class="circle-flow-container">
+        <div class="circle-flow">
+            <!-- 中心文字 -->
+            <div class="circle-center">数据互通</div>
+
+            <!-- 三个图标 -->
+            <div class="icon icon-rhino">Rhino</div>
+            <div class="icon icon-revit">Revit</div>
+            <div class="icon icon-cad">CAD</div>
+
+            <!-- 水滴轨迹 -->
+            <div class="circle-track">
+                <div class="droplet"></div>
+                <div class="droplet"></div>
+                <div class="droplet"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+<section class="plugin-section">
+    <h2 class="title">三大核心插件</h2>
+    <p class="plugin-subtitle">助力幕墙行业数字化，提升设计与加工效率</p>
+
+    <div class="plugin-grid">
+        <!-- 插件卡片 1 -->
+        <div class="plugin-card">
+            <div class="plugin-image">
+                <img src="images/cad-bg.png" alt="CAD 插件">
+                <span class="plugin-tag">设计工具</span>
+
+            </div>
+            <div class="plugin-content">
+
+                <img src="/images/CAD.png" style="width: 160px;height: 160px; display:block; margin:0 auto;" />
+                <h3 style="display:block; margin:0 auto;">三鑫BIM设计2.0</h3>
+                <p>一款基于 CAD 的智能设计插件，实现 CAD 与 Rhino 模型及信息的高效互通，快速出图，提升团队协同效率</p>
+                <div class="plugin-actions">
+                    <a href="#" class="btn-primary">查看详情</a>
+                    <a href="#" class="btn-secondary">下载</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 插件卡片 2 -->
+        <div class="plugin-card">
+            <div class="plugin-image">
+                <img src="images/rhino-bg.png" alt="Rhino 插件">
+                <span class="plugin-tag">建模工具</span>
+
+            </div>
+            <div class="plugin-content">
+                <img src="/images/logo_centered_2.png" style="width: 160px;height: 160px; display:block; margin:0 auto;" />
+
+                <h3 style="display:block; margin:0 auto;">SX_Snail 插件</h3>
+                <p>一款基于 Rhino & Grasshopper 的智能建模插件，实现加工图自动生成、构件自动编号、材料清单提取，让设计与制造高效衔接</p>
+                <div class="plugin-actions">
+                    <a href="#" class="btn-primary">查看详情</a>
+                    <a href="#" class="btn-secondary">下载</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 插件卡片 3 -->
+        <div class="plugin-card">
+            <div class="plugin-image">
+                <img src="images/revit-bg.png" alt="Revit 插件">
+                <span class="plugin-tag">正向设计</span>
+
+            </div>
+            <div class="plugin-content">
+                <img src="/images/logo_centered_3.png" style="width: 160px;height: 160px; display:block; margin:0 auto;" />
+                <h3 style="display:block; margin:0 auto;">SX_Revit 插件</h3>
+                <p>一款基于 Revit 平台，打通Rhino与Revit的双向通道，支持正向设计流转，实现参数化设计与 BIM 出图的无缝衔接</p>
+                <div class="plugin-actions">
+                    <a href="#" class="btn-primary">查看详情</a>
+                    <a href="#" class="btn-secondary">下载</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* <div class="plugin-more">
+        <a href="#" class="btn-view-all">开始探索 →</a>
+    </div> *@
+</section>
+
+
+
+
+
+
+
+<section class="partners-section">
+    @* <p class="partners-title">三鑫智能化设计体系</p> *@
+    <div class="marquee-wrapper">
+        <!-- 第一排 -->
+        <div class="marquee">
+            @foreach (var icon in IconPaths)
+            {
+                <img src="@icon" class="partner-icon" alt="icon" />
+            }
+            @foreach (var icon in IconPaths)
+            {
+                <img src="@icon" class="partner-icon" alt="icon" />
+            }
+        </div>
+
+        <!-- 第二排（反向） -->
+        <div class="marquee reverse">
+            @foreach (var icon in IconPaths)
+            {
+                <img src="@icon" class="partner-icon" alt="icon" />
+            }
+            @foreach (var icon in IconPaths)
+            {
+                <img src="@icon" class="partner-icon" alt="icon" />
+            }
+        </div>
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="integration-section">
+    <h2 class="integration-title">使用您未知的技术，</h2>
+    <p class="integration-subtitle">获得您意想不到的提升。</p>
+
+    <div class="integration-grid">
+        <!-- 第一行 4 个 -->
+        <div class="integration-item"><img src="images/revit.png"><p>Revit</p></div>
+        <div class="integration-item"><img src="images/rhino.png"><p>Rhino</p></div>
+        <div class="integration-item"><img src="images/grasshopper.png"><p>Grasshopper</p></div>
+        <div class="integration-item"><img src="images/archicad.png"><p>CAD</p></div>
+    </div>
+
+    <div class="integration-grid second-row">
+        <!-- 第二行 3 个 居中 -->
+        <div class="integration-spacer"></div>
+        <div class="integration-item"><img src="images/CAD.png"><p>SX_cad</p></div>
+        <div class="integration-item"><img src="images/logo_centered_2.png"><p>SX_Snail</p></div>
+        <div class="integration-item"><img src="images/logo_centered_3.png"><p>SX_Revit</p></div>
+        <div class="integration-spacer"></div>
+    </div>
+
+    <a href="#" class="integration-btn">浏览所有连接器</a>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@code {
+    // private string[] PartnerNames = new[]
+    // {
+    //     "CAD", "Rhino", "Grasshopper", "Revit", "SX_Snail", "Elefont",
+    //     "BIM", "Perkins&Will", "FDB", "IFC", "SOM", "SX_Revit",
+    // };
+
+
+    private List<string> IconPaths = new();
+
+    protected override void OnInitialized()
+    {
+        var folderPath = Path.Combine(Environment.CurrentDirectory, "wwwroot/icons"); // ✅ 图标文件夹
+        if (Directory.Exists(folderPath))
+        {
+            IconPaths = Directory.GetFiles(folderPath, "*.png") // ✅ 或 *.svg, *.jpg
+                        .Select(path => "icons/" + Path.GetFileName(path))
+                        .ToList();
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initSpeckleMarquee");
+            await JS.InvokeVoidAsync("scrollFadeInit");
+            await JS.InvokeVoidAsync("scrollFadeInit1");
+        }
+    }
+}

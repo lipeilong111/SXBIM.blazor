@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\MyWebsiteCopy\**" />
+    <Content Remove="wwwroot\MyWebsiteCopy\**" />
+    <EmbeddedResource Remove="wwwroot\MyWebsiteCopy\**" />
+    <None Remove="wwwroot\MyWebsiteCopy\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\%2a%2a" />
+    <Content Remove="wwwroot\images\revit.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="9.0.5" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\icons\" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://cdn.jsdelivr.net/gh/roadrunner-server/roadrunner@latest/schemas/config/3.0.schema.json" /></VisualStudio></ProjectExtensions>
+
+</Project>

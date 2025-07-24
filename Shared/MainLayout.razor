@@ -1,0 +1,118 @@
+﻿@inherits LayoutComponentBase
+<!-- ✅ 顶部导航 -->
+<header class="speckle-header">
+    <div class="nav-container" >
+        <!-- Logo -->
+        <a class="logo" href="/">
+            <img src="images/海南控股.png" alt="三鑫全流程BIM应用" class="logo-icon" />
+            @* <span>三鑫全流程BIM应用</span> *@
+        </a>
+        <!-- Desktop Menu -->
+        <nav class="desktop-menu">
+            <ul class="nav-links">
+                <li>
+                    <a href="#">软件展示 <i class="fas fa-chevron-down"></i></a>
+                </li>
+                <li>
+                    <a href="#">项目案例 <i class="fas fa-chevron-down"></i></a>
+                </li>
+                <li>
+                    <a href="#">功能介绍</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Actions -->
+        <div class="nav-actions">
+            <a href="#" class="btn-outline">Log in</a>
+            <a href="#" class="btn-primary1">Sign up</a>
+        </div>
+
+        <!-- Mobile Menu Icon -->
+        <div class="mobile-menu-icon" @onclick="ToggleMenu">
+            <i class="fas fa-bars"></i>
+        </div>
+    </div>
+</header>
+<main>
+    @Body
+</main>
+
+<footer class="footer">
+    <div class="footer-top">
+        <h2 class="footer-heading">实现你“永不可能”的项目交付</h2>
+        <a href="#" class="footer-btn">立即体验</a>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-main">
+        <!-- 左侧 Logo + 社交图标 -->
+        <div class="footer-left">
+            <div class="brand-logo">
+                <img src="images/海南控股.png" alt="三鑫软件" class="footer-logo">
+                @* <span class="brand-name">三鑫软件</span> *@
+            </div>
+            <div class="footer-socials">
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-weixin"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+
+        <!-- 四列导航 -->
+        <div class="footer-links">
+            <div>
+                <h4>解决方案</h4>
+                <ul>
+                    <li><a href="#">BIM设计工具</a></li>
+                    <li><a href="#">加工图智能生成</a></li>
+                    <li><a href="#">信息化协同</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>产品</h4>
+                <ul>
+                    <li><a href="#">三鑫BIM工具箱</a></li>
+                    <li><a href="#">GH助手</a></li>
+                    <li><a href="#">SX-Revit插件</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>资源</h4>
+                <ul>
+                    <li><a href="#">使用教程</a></li>
+                    <li><a href="#">客户案例</a></li>
+                    <li><a href="#">社区支持</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>关于我们</h4>
+                <ul>
+                    <li><a href="#">公司介绍</a></li>
+                    <li><a href="#">加入我们</a></li>
+                    <li><a href="#">联系我们</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2025 三鑫科技有限公司. 版权所有.</p>
+        <div class="footer-legal">
+            <a href="#">隐私政策</a>
+            <a href="#">服务条款</a>
+            <a href="#">使用规范</a>
+        </div>
+    </div>
+</footer>
+
+
+
+@code {
+    private bool showMenu = false;
+    private string mobileMenuStyle => showMenu ? "display:flex;" : "display:none;";
+
+    private void ToggleMenu() => showMenu = !showMenu;
+}

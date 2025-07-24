@@ -1,0 +1,1307 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+app {
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+
+
+/* 导航栏基础 */
+.speckle-header {
+    width: 100%;
+    background: #121212;
+    border-bottom: 1px solid #eaeaea;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+}
+
+.nav-container {
+    height: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #000;
+    gap: 0.5rem;
+}
+
+.logo-icon {
+    width: 160px;
+    height: 50px;
+}
+
+/* 导航链接 */
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .nav-links a {
+        text-decoration: none;
+        color: gray;
+        font-weight: 500;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+        .nav-links a:hover {
+            color: #0078ff;
+        }
+
+
+
+
+/* 按钮 */
+.nav-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-outline {
+    border: 1px solid #d0d0d0;
+    background: transparent;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    height: 16px;
+    font-weight: 500;
+    font-size: 0.6rem;
+    transition: 0.2s;
+}
+
+    .btn-outline:hover {
+        background: white;
+        color: black
+    }
+
+.btn-primary1 {
+    background: #0078ff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    height: 16px;
+    font-size: 0.6rem;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: #005fcc;
+}
+
+/* 移动菜单图标 */
+.mobile-menu-icon {
+    display: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .desktop-menu {
+        display: none;
+    }
+
+    .mobile-menu-icon {
+        display: block;
+    }
+}
+
+
+
+/* Hero Section 优化 */
+.hero {
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 65vh;
+    /* ✅ Speckle 风格背景 */
+    background: radial-gradient(circle at center, rgba(249, 240, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%), /* 中心淡紫光晕 */
+    linear-gradient(180deg, rgba(225, 237, 255, 1) 0%, /* 顶部蓝紫明显 */
+    rgba(245, 245, 255, 0.3) 100%, /* 中部淡化 */
+    rgba(255, 255, 255, 1) 100% /* ✅ 底部完全白，无硬线 */
+    );
+}
+/* ✅ Hero 底部跑马灯 */
+
+.hero-bg img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.1); /* ✅ 半透明遮罩 */
+    z-index: -1;
+}
+
+
+/* 内容容器 */
+.hero-content {
+    max-width: 1200px; /* 限制最大宽度 */
+    width: 50%;
+    margin: 0 auto; /* 居中 */
+}
+
+    .hero-content h1 {
+        font-size: 3rem;
+        font-weight: 1000;
+        margin-bottom: 1rem;
+    }
+
+    .hero-content p {
+        font-size: 1.2rem;
+        color: #555;
+        margin-bottom: 2rem;
+    }
+
+/* ✅ 按钮组容器 */
+.hero-button-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.hero-btn {
+    display: inline-flex; /* ✅ 启用 Flex 布局 */
+    align-items: center; /* ✅ 垂直居中 */
+    justify-content: center; /* ✅ 水平居中 */
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.8rem 1.6rem; /* ✅ 内边距保持一致 */
+    border-radius: 8px;
+    text-decoration: none;
+    line-height: normal; /* ✅ 避免 line-height 干扰 */
+    cursor: pointer;
+}
+
+/* 左按钮 */
+.btn-outline.hero-btn {
+    background: #fff;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+/* 右按钮 */
+.btn-primary.hero-btn {
+    background: #0078ff;
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 120, 255, 0.3);
+}
+
+    .btn-primary.hero-btn:hover {
+        background: #005fcc;
+    }
+
+
+
+/* 竖线 Divider */
+.hero-divider {
+    width: 1px;
+    height: 24px; /* 高度 */
+    background-color: gray; /* 颜色 */
+    margin: 1rem auto; /* 居中显示 */
+}
+
+/* 底部文字 */
+.partners-title {
+    font-size: 2rem;
+    font-weight: 600; /* 加粗 */
+    color: #111;
+    margin-top: 1rem;
+}
+
+
+
+
+
+.marquee-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 00px;
+    background: linear-gradient(to right, #f9f9f9, #fff);
+    padding: 0px 0;
+}
+
+    /* ✅ 左侧渐变 */
+    .marquee-wrapper::before,
+    .marquee-wrapper::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 500px; /* ✅ 控制模糊范围 */
+        height: 100%;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .marquee-wrapper::before {
+        left: 0;
+        background: linear-gradient(to right, #f9f9f9 30%, rgba(249,249,249,0) 100%);
+    }
+
+    .marquee-wrapper::after {
+        right: 0;
+        background: linear-gradient(to left, #f9f9f9 30%, rgba(249,249,249,0) 100%);
+    }
+
+/* 跑马灯本体 */
+.marquee {
+    display: flex;
+    gap: 40px;
+    white-space: nowrap;
+    animation: scroll 20s linear infinite;
+}
+
+    .marquee.reverse {
+        animation: scroll-reverse 20s linear infinite;
+    }
+
+/* 图标样式 */
+.partner-icon {
+    height: 50px;
+    width: auto;
+    filter: grayscale(100%);
+    opacity: 0.8;
+    transition: filter 0.3s, opacity 0.3s, transform 0.1s ease; /* 加 transform 动画 */
+}
+
+    .partner-icon:hover {
+        filter: grayscale(0%);
+        opacity: 1;
+        transform: scale(1.6); /* 放大 20% */
+    }
+
+/* 动画 */
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes scroll-reverse {
+    0% {
+        transform: translateX(-50%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* 区块整体 */
+.partners-section {
+    background: white;
+    padding: 1rem 0;
+    text-align: center;
+    border: 2px dashed gray; /* 2px虚线边框，颜色浅灰 */
+    border-radius: 8px; /* 可选，圆角 */
+}
+/* 包裹两排 */
+.marquee-wrapper {
+    background: white;
+    position: relative;
+    width: 100%;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+/* 每一排 */
+.marquee {
+    display: flex;
+    gap: 3rem;
+    white-space: nowrap;
+    animation: scroll-left 30s linear infinite;
+}
+
+    .marquee.reverse {
+        animation: scroll-right 30s linear infinite;
+        margin-top: 1rem;
+    }
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes scroll-right {
+    0% {
+        transform: translateX(-50%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* 文本样式 */
+.partner-text {
+    font-size: 1.4rem;
+    color: #555;
+    font-weight: 600;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+}
+
+    .partner-text:hover {
+        opacity: 1;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+.feature-section {
+    background: #fff;
+    padding: 80px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.feature-container {
+    display: flex;
+    max-width: 1200px;
+    width: 100%;
+    gap: 40px;
+    align-items: center;
+}
+
+/* 左侧文字 */
+.feature-text {
+    flex: 1;
+}
+
+.feature-tag {
+    display: inline-block;
+    font-size: 0.875rem;
+    letter-spacing: 1px;
+    color: #777;
+    margin-bottom: 1rem;
+}
+
+.feature-text h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.feature-text p {
+    font-size: 1.125rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+.feature-btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+}
+
+blockquote {
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+}
+
+.testimonial {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+    .testimonial img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+
+
+
+.image-stack {
+    position: relative;
+    width: 500px; /* 根据图片大小调整 */
+    height: 300px;
+    margin: 0 auto;
+}
+
+/* 公共样式 */
+.stack-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    transition: transform 0.6s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+/* ✅ 初始状态：重叠 */
+.img1 {
+    z-index: 3;
+}
+
+.img2 {
+    z-index: 2;
+}
+
+.img3 {
+    z-index: 1;
+}
+
+/* ✅ Hover 时水平展开 */
+.image-stack:hover .img1 {
+    transform: translateX(-600px); /* 根据图片宽度调整 */
+}
+
+.image-stack:hover .img2 {
+    transform: translateX(-300px);
+}
+
+.image-stack:hover .img3 {
+    transform: translateX(0); /* 保持原位 */
+}
+
+
+
+
+
+
+.integration-section {
+    text-align: center;
+    padding: 60px 20px;
+    background: #fff;
+}
+
+.integration-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.integration-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+/* 第一行：4 列 */
+.integration-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 900px;
+    margin: 0 auto;
+    border-top: 1px solid #eaeaea;
+}
+
+.integration-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+    border-left: 1px solid #eaeaea;
+}
+
+    .integration-item img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        margin-bottom: 10px;
+    }
+
+    .integration-item p {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* 去掉每行第一个 item 的左边框 */
+    .integration-item:first-child {
+        border-left: none;
+    }
+
+/* 第二行：5 列，中间 3 个居中 */
+.second-row {
+    grid-template-columns: repeat(5, 1fr);
+    border-bottom: 1px solid #eaeaea;
+}
+
+/* 占位列 */
+.integration-spacer {
+    border: none;
+}
+
+/* 按钮 */
+.integration-btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 10px 22px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    text-decoration: none;
+}
+
+    .integration-btn:hover {
+        background: #f9f9f9;
+    }
+
+/* 鼠标悬停效果 */
+.integration-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.integration-item:hover img {
+    transform: scale(1.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.integration-item:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+}
+
+
+
+
+
+
+/*数据扭转*/
+.bim-data-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: #121212;
+    color: #fff;
+    padding: 100px 200px;
+}
+
+.bim-text {
+    max-width: 500px;
+}
+
+.bim-tag {
+    font-size: 14px;
+    color: #aaa;
+    letter-spacing: 1px;
+}
+
+.bim-text h2 {
+    font-size: 2rem;
+    margin: 20px 0;
+}
+
+.bim-text ul li {
+    margin-bottom: 12px;
+    color: #ccc;
+}
+
+.bim-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 20px; /* 控制按钮大小 */
+    background: #0078ff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 12px;
+    text-align: center;
+    line-height: normal; /* 确保文字不被压缩 */
+}
+
+.bim-visual img {
+    width: 480px;
+    border-radius: 8px;
+}
+
+
+
+
+/* 图标公共样式 */
+.icon {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #1e1e1e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: #fff;
+    animation: pulse 2.5s infinite ease-in-out;
+}
+
+/* 各自的呼吸光颜色 */
+.icon-rhino {
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 15px rgba(0, 120, 255, 0.6);
+    animation-delay: 0s;
+}
+
+.icon-revit {
+    bottom: 20%;
+    left: -40px;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.6);
+    animation-delay: 0.5s;
+}
+
+.icon-cad {
+    bottom: 20%;
+    right: -40px;
+    box-shadow: 0 0 15px rgba(0, 184, 255, 0.6);
+    animation-delay: 1s;
+}
+
+/* 呼吸动画 */
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(0, 120, 255, 0.6), 0 0 30px rgba(0, 120, 255, 0.2);
+        transform: scale(1);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(0, 120, 255, 0.9), 0 0 60px rgba(0, 120, 255, 0.4);
+        transform: scale(1.08);
+    }
+}
+
+/* 外层容器 */
+.circle-flow-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px;
+    background: #121212;
+    color: #fff;
+}
+
+/* 圆形主容器 */
+.circle-flow {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    border: 2px dashed rgba(255,255,255,0.2); /* ✅ 辅助圆圈 */
+}
+
+/* 中心文字 */
+.circle-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: bold;
+    color: #ccc;
+}
+
+/* 三个图标分布在圆外 */
+.icon {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #1e1e1e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    box-shadow: 0 0 12px rgba(0, 120, 255, 0.5);
+}
+
+/* 分布位置 */
+.icon-rhino {
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.icon-revit {
+    bottom: 20%;
+    left: -40px;
+}
+
+.icon-cad {
+    bottom: 20%;
+    right: -40px;
+}
+
+/* 水滴轨迹容器 */
+.circle-track {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    animation: rotateCircle 8s linear infinite;
+}
+
+/* 水滴样式 */
+.droplet {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    background: #00bfff;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    animation: scaleDroplet 2s ease-in-out infinite;
+}
+
+    .droplet:nth-child(2) {
+        animation-delay: 0.5s;
+    }
+
+    .droplet:nth-child(3) {
+        animation-delay: 1s;
+    }
+
+/* 整个轨迹旋转 */
+@keyframes rotateCircle {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 水滴呼吸效果 */
+@keyframes scaleDroplet {
+    0%,100% {
+        transform: translateX(-50%) scale(0.8);
+    }
+
+    50% {
+        transform: translateX(-50%) scale(1.3);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 插件区整体 */
+/* 整体区域 */
+.plugin-section {
+    padding: 20px 60px;
+    text-align: center;
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(to bottom, #121212 0%, #1c1c1c 30%, #ffffff 60%);
+    color: #fff;
+    overflow: visible;
+}
+
+.title {
+    font-size: 80px;
+    font-weight: 900;
+    color: #fff;
+    font-style: italic; /* 倾斜效果 */
+    letter-spacing: 4px;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.6); /* 黑色阴影 */
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+    margin-bottom: 30px; /* 改小，比如 10px */
+}
+.plugin-subtitle {
+    font-size: 18px;
+    color:darkgray;
+    margin-bottom: 40px;
+}
+
+/* 卡片网格 */
+.plugin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    max-width: 1200px;
+    margin: auto;
+    gap: 40px;
+}
+
+/* 插件卡片 */
+.plugin-card {
+    will-change: transform;
+    background: #fff;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+    --translateY: 40px;
+    --scale: 1;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    justify-content: space-between;
+    z-index: 0;
+    overflow: visible;
+    border-radius: 10px;
+}
+
+
+    .plugin-card:hover {
+        transform: translateY(0) scale(1.1);
+    }
+
+
+/* 图片区域 */
+.plugin-image {
+    position: relative;
+    height: 180px;
+    background: #f2f2f2;
+    border-radius: 12px;
+}
+
+    .plugin-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+
+/* 标签 */
+.plugin-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #e0e0e0; /* 灰色背景 */
+    color: #333;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* 内容区 */
+.plugin-content {
+    flex: 1; /* 填充剩余空间 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    text-align: left;
+    background: #F5F5F5;
+}
+    .plugin-content:hover {
+        background: #e0e0e0 ;/* 浅蓝高亮 */
+        transition: background 0.3s ease;
+    }
+
+    .plugin-content h3 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #222;
+    }
+
+    .plugin-content p {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 15px;
+    }
+
+/* 按钮组 */
+.plugin-actions {
+    display: flex;
+    gap: 10px;
+}
+/* 主按钮 */
+.btn-primary, .btn-secondary {
+    display: flex; /* ✅ 使用 Flex */
+    align-items: center; /* ✅ 垂直居中 */
+    justify-content: center; /* ✅ 水平居中 */
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    flex: 1; /* ✅ 占用相同宽度 */
+    text-align: center;
+    transition: background 0.3s, color 0.3s;
+}
+
+.btn-primary {
+    background: #005fcc;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    flex: 1;
+    text-align: center;
+    transition: background 0.3s;
+}
+
+.btn-secondary {
+    border: 1px solid #999;
+    color: #333;
+    background: #fff;
+    padding: 10px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    flex: 1;
+    text-align: center;
+    transition: background 0.3s, color 0.3s;
+}
+
+/* Hover 效果 */
+.btn-primary:hover {
+    background: #555;
+}
+
+.btn-secondary:hover {
+    background: #f2f2f2;
+}
+/* 外层容器，按钮居中 */
+.plugin-more {
+    text-align: center; /* ✅ 让按钮在容器内居中 */
+    margin-top: 30px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 整体 Footer */
+.footer {
+    background: #000;
+    color: #fff;
+    padding: 50px 20px 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* 顶部 CTA */
+.footer-top {
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.footer-heading {
+    font-size: 1.8rem; /* ✅ 缩小标题 */
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.footer-btn {
+    display: inline-block;
+    padding: 10px 22px;
+    background: #0078ff;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 14px; /* ✅ 缩小按钮字体 */
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .footer-btn:hover {
+        background: #005fcc;
+    }
+
+.footer-divider {
+    height: 1px;
+    background: #1a1a1a;
+    margin: 40px 0;
+}
+
+/* 主体布局 */
+.footer-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* ✅ 顶部对齐 */
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: 50px;
+}
+/* ✅ 让左侧品牌和右侧四列保持顶部对齐 */
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-top: 0; /* ✅ 确保没有额外 margin */
+}
+
+.footer-socials {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px; /* ✅ 往下移一点，可以调大一点，比如 15px */
+}
+
+/* 左侧 Logo 区域 */
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    min-width: 180px;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 0px; /* ✅ 控制文字和社交图标之间的间距 */
+    margin-top: 15px; /* ✅ 让 Logo + 三鑫软件整体下移 */
+}
+
+.footer-logo {
+    width: 90px; /* ✅ 缩小 Logo */
+    height: 30px;
+}
+
+.brand-name {
+    font-size: 12px; /* ✅ 缩小品牌文字 */
+    font-weight: 600;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 12px; /* ✅ 缩小间距 */
+}
+
+    .footer-socials a {
+        color: #fff;
+        font-size: 12px; /* ✅ 缩小图标 */
+        transition: color 0.3s ease; /* ✅ 取消抖动，只保留颜色变化 */
+    }
+
+        .footer-socials a:hover {
+            color: #0078ff;
+        }
+
+/* 四列链接 */
+.footer-links {
+    display: flex;
+    gap: 60px;
+    flex-wrap: wrap;
+    margin-left: 100px; /* ✅ 整体右移 */
+}
+
+
+    .footer-links h4 {
+        font-size: 12px; /* ✅ 缩小标题 */
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: white;
+    }
+
+    .footer-links ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-links li {
+        margin-bottom: 8px;
+        color: gray;
+    }
+
+    .footer-links a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 10px; /* ✅ 缩小字体 */
+        color: gray
+    }
+
+        .footer-links a:hover {
+            color: #0078ff;
+        }
+
+/* 底部版权 */
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 30px auto 0;
+    font-size: 11px; /* ✅ 缩小版权字体 */
+    color: #777;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.footer-legal a {
+    margin-left: 15px;
+    color: #777;
+    text-decoration: none;
+    font-size: 11px;
+}
+
+    .footer-legal a:hover {
+        color: #fff;
+    }
