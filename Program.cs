@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,11 +25,14 @@ app.UseRouting();
 //自定义中间件，记录每个请求
 app.Use(async (context, next) =>
 {
-    var ip = context.Connection.RemoteIpAddress?.ToString();
-    var path = context.Request.Path;
+    var path = context.Request.Path.ToString();
     var method = context.Request.Method;
-    var time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-    Console.WriteLine($"[访问日志] 时间: {time}, IP: {ip}, 路径: {method} {path}");
+    if (path == "/" && method == "GET") // 只记录首页 GET 请求
+    {
+        var ip = context.Connection.RemoteIpAddress?.ToString();
+        var time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        Console.WriteLine($"[访问日志] 时间: {time}, IP: {ip}, 路径: {method} {path}");
+    }
     await next.Invoke();
 });
 
