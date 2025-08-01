@@ -1,0 +1,219 @@
+﻿@inherits LayoutComponentBase
+
+<!-- ✅ 顶部导航 -->
+<header class="main-header">
+    <div class="container">
+        <!-- Logo -->
+        <a class="logo" href="/">
+            <img src="images/海南控股1.png" alt="三鑫全流程BIM应用" class="logo-icon" />
+            <span class="logo-text">三鑫全流程BIM应用</span>
+        </a>
+
+        <!-- 操作按钮 -->
+        <div class="header-actions">
+            <a href="#" class="btn-outline">登出</a>
+            <a href="#" class="btn-solid">登录</a>
+        </div>
+    </div>
+</header>
+
+<main>
+    @Body
+</main>
+
+<!-- ✅ 页脚 -->
+<footer class="main-footer">
+    <div class="elementor-divider">
+        <span class="elementor-divider-separator"></span>
+    </div>
+    <div class="footer-container">
+        <div class="footer-links">
+            <a href="#">法律信息</a>
+            <span class="separator">|</span>
+            <a href="#">隐私协议</a>
+            <span class="separator">|</span>
+            <a href="#">用户权限</a>
+            <span class="separator">|</span>
+            <a href="#">安全信息</a>
+            <span class="separator">|</span>
+            <a href="#">联系我们</a>
+            <span class="separator">|</span>
+            <span class="footer-text">应用版本：1.0.0 开发者：三鑫科技</span>
+        </div>
+        <div class="footer-bottom">
+            <p>版权所有©2024 三鑫科技有限公司 保留一切权利。粤ICP备12345678号</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .elementor-divider {
+        display: flex;
+        justify-content: center;
+        margin: 24px 0;
+    }
+
+    .elementor-divider-separator {
+        width: 100%;
+        max-width: 1000px;
+        border-top: 1px solid #ddd;
+    }
+
+
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: #fff;
+    }
+
+    .main-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 24px;
+        background-color: white;
+        border-bottom: 2px solid #00b36b;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+
+    .logo {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    .logo-icon {
+        width: 140px;
+        height: 50px;
+        margin-right: 8px;
+    }
+
+    .logo-text {
+        font-size: 18px;
+        color: #00b36b;
+        font-weight: bold;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-shrink: 0;
+        flex-wrap: nowrap;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 20px;
+        height: 44px;
+        min-width: 120px;
+        font-size: 16px;
+        font-weight: 500;
+        border-radius: 12px;
+        font-family: 'Segoe UI', sans-serif;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+        box-sizing: border-box;
+    }
+
+    .btn-outline {
+        background-color: #fff;
+        border: 2px solid #000;
+        color: #000;
+        font-size: 16px;
+        border-radius: 12px;
+        width: 100px;
+        height: 44px;
+    }
+
+        .btn-outline:hover {
+            background-color: #f0f0f0;
+        }
+
+    .btn-solid {
+        background-color: #00b140;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        border-radius: 12px;
+        width: 100px;
+        height: 44px;
+        text-align: center;
+        text-decoration: none;
+        line-height: normal;
+    }
+
+        .btn-solid:hover {
+            background-color: #009533;
+        }
+
+
+    .main-footer {
+        background-color: #fff;
+        color: #888;
+        font-size: 12px;
+        padding: 24px 16px;
+        text-align: center;
+    }
+
+    .footer-divider {
+        border-top: 1px solid #ddd;
+        margin: 0 auto 20px;
+        width: 100%;
+        max-width: 1000px;
+    }
+
+    .footer-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-links {
+        margin-bottom: 8px;
+        line-height: 1.8;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .footer-links a,
+        .footer-text {
+            color: #888;
+            font-size: 12px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            .footer-links a:hover {
+                color: #00b36b;
+            }
+
+    .separator {
+        margin: 0 4px;
+        color: #ccc;
+    }
+
+    .footer-bottom {
+        color: #aaa;
+        text-align: center;
+        margin-top: 10px;
+        font-size: 12px;
+    }
+</style>

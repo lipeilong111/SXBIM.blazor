@@ -59,9 +59,6 @@ namespace SXBIM_Login.Controller
         {
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
             await conn.OpenAsync();
-
-
-
             // 查询真实姓名
             string realNameQuery = "SELECT RealName FROM Users WHERE Username = @username";
             using var nameCmd = new SqlCommand(realNameQuery, conn);

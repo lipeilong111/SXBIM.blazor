@@ -1,0 +1,113 @@
+﻿@page "/"
+@inject IJSRuntime JS
+
+<title>三鑫插件下载中心</title>
+<style>
+    body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background-color: #ffffff;
+        color: #333;
+    }
+
+    header {
+        background-color: #00b36b;
+        color: white;
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        header p {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+    .download-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: white;
+        color: #00b36b;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .section {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding: 40px 20px;
+        flex-wrap: wrap;
+        background-color: #f8f8f8;
+    }
+
+    .card {
+        background-color: white;
+        width: 300px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+    }
+
+        .card h3 {
+            margin-top: 0;
+            color: #00b36b;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .card button {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background-color: #00b36b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+</style>
+<header>
+    <h1>三鑫插件下载中心</h1>
+    <p>一站式获取三鑫 BIM 工具插件，助力设计与出图效率</p>
+    <button class="download-button">了解三鑫插件生态</button>
+</header>
+
+<div class="section">
+    <div class="card">
+        <h3>三鑫BIM工具箱</h3>
+        <p>用于CAD/Rhino的信息赋值、编号、图纸一键生成。</p>
+        <p><strong>支持平台：</strong>CAD 2020+ / Rhino 7</p>
+        <button onclick="location.href='/download/sxbimcad.exe'">下载</button>
+    </div>
+
+    <div class="card">
+        <h3>三鑫GH助手</h3>
+        <p>基于Grasshopper，自动生成加工图纸与材料清单。</p>
+        <p><strong>支持平台：</strong>Rhino 7 / Grasshopper</p>
+        <button onclick="location.href='/download/sxbimgh.rhi'">下载</button>
+    </div>
+
+    <div class="card">
+        <h3>SX-Revit正向设计插件</h3>
+        <p>从Rhino快速导入构件信息至Revit并生成图纸。</p>
+        <p><strong>支持平台：</strong>Revit 2023+</p>
+        <button onclick="location.href='/download/sxrevit.zip'">下载</button>
+    </div>
+</div>
+
+
+
+@code {
+
+}
