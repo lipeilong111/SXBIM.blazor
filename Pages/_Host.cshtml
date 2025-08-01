@@ -31,11 +31,21 @@
         transition: opacity 0.6s ease;">
 
         <img src="images/主页加载.png" alt="Logo" style="width:100px; height:100px; margin-bottom:20px;">
-        <span>Loading...</span>
+        @*   <span>Loading...</span> *@
+
+        <div class="tech-loader">
+            <div class="laser-beam"></div>
+
+            <div class="glow-frame">
+                <input type="text" placeholder="账号" />
+                <input type="password" placeholder="密码" />
+            </div>
+        </div>
+
     </div>
 
     <!-- ✅ JS 控制加载页面 -->
-    <script>
+    @* <script>
            document.addEventListener("DOMContentLoaded", function () {
             setTimeout(() => {
                 const loading = document.getElementById('loading-screen');
@@ -51,7 +61,9 @@
                 }, 600); // 动画结束后移除 loading
             }, 3000); // 显示 3 秒
         });
-    </script>
+    </script> *@
+
+
 
     <app>
         @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))

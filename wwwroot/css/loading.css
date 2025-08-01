@@ -18,3 +18,90 @@
         transform: translateY(-10px);
     }
 }
+
+
+.tech-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    font-family: 'Segoe UI', sans-serif;
+    /* ❌ 不再全屏遮挡 */
+    width: 100%;
+    max-width: 100px;
+    margin: 100px auto 0 auto; /* 距离顶部保留空间给 Logo */
+    border-radius: 12px;
+}
+
+
+ /*中心光束线条*/ 
+.laser-beam {
+    height: 3px;
+    width: 0;
+    background: linear-gradient(to right, transparent, #00ff99, transparent);
+    box-shadow: 0 0 20px #00ff99, 0 0 40px #00ff99;
+    animation: beam-grow 1.5s ease-out forwards;
+    margin-bottom: 40px;
+}
+
+@keyframes beam-grow {
+    0% {
+        width: 0;
+        opacity: 0.2;
+    }
+
+    100% {
+        width: 280px;
+        opacity: 1;
+    }
+}
+
+/* 输入框容器（发光） */
+.glow-frame {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    opacity: 0;
+    animation: fade-in 1s ease 1.6s forwards;
+}
+
+    /* 输入框样式 */
+    .glow-frame input {
+        width: 280px;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        background: rgba(10, 10, 10, 0.95);
+        color: #00ffcc;
+        box-shadow: 0 0 12px #00ff99;
+        text-align: center;
+        outline: none;
+        transition: box-shadow 0.3s ease;
+    }
+
+        .glow-frame input::placeholder {
+            color: #00cc88;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        /* 输入时高亮 */
+        .glow-frame input:focus {
+            box-shadow: 0 0 18px #00ffcc, 0 0 24px #00ffcc;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+/* 淡入输入框动画 */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
