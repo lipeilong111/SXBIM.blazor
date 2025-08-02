@@ -97,4 +97,19 @@ namespace SXBIM_Login.Controller
         public string Action { get; set; }
         public string App { get; set; }
     }
+
+
+
+
+    public class 请求方法
+    {
+        public static HttpClient CreateUnsafeClient()
+        {
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (msg, cert, chain, errors) => true
+            };
+            return new HttpClient(handler);
+        }
+    }
 }

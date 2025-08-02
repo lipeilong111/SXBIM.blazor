@@ -24,19 +24,24 @@ builder.Services.AddScoped<SXBIM_Login.Services.LoginService>();
 builder.Services.AddControllers();
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.ListenAnyIP(80); // 监听 HTTP 80 端口
+    serverOptions.ListenAnyIP(80);
 });
 
 var app = builder.Build();
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.Use(async (context, next) =>
 {
     if (context.Request.Path == "/")
     {
+#if DEBUG
+        context.Response.Redirect("/download");
+        return;
+#else
         context.Response.Redirect("/login");
         return;
+#endif
     }
 
     await next();

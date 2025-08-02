@@ -1,4 +1,6 @@
 ﻿@page "/download"
+@using SXBIM_Login.Controller
+@using System.Text.Json
 @inject IJSRuntime JS
 @inject NavigationManager Nav
 @inject HttpClient Http
@@ -190,7 +192,10 @@
             var isLoggedIn = await JS.InvokeAsync<string>("sessionStorage.getItem", "isLoggedIn");
             if (isLoggedIn != "true")
             {
-                Nav.NavigateTo("/login", true); // 强制跳转
+#if DEBUG
+#else
+                Nav.NavigateTo("/login", true);
+#endif
             }
 
             await LoadPluginInfo("cad");
@@ -206,14 +211,31 @@
     private async Task DownloadMultiple()
     {
         await JS.InvokeVoidAsync("downloadMultipleFiles");
+        await WriteDownloadLog("rhino");
     }
     private async Task downloadCAD()
     {
         await JS.InvokeVoidAsync("downloadCAD");
+        await WriteDownloadLog("cad");
     }
     private async Task downloadRevit()
     {
         await JS.InvokeVoidAsync("downloadRevit");
+        await WriteDownloadLog("revit");
+    }
+
+
+    private async Task WriteDownloadLog(string Appname)
+    {
+        var user = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
+        var log = new LogRequest
+        {
+            Username = user,
+            Action = "_download_",
+            App = Appname
+        };
+
+        await Http.PostAsJsonAsync("api/auth/write", log);
     }
 
 
@@ -222,27 +244,36 @@
     {
         try
         {
-            var info = await Http.GetFromJsonAsync<PluginInfo>($"/api/download/file-info?plugin={plugin}");
-
-            if (info != null)
+            var client = 请求方法.CreateUnsafeClient();
+            var response = await client.GetAsync("https://192.168.7.194:5001/api/download/file-info?plugin=" + plugin);
+            if (response.IsSuccessStatusCode)
             {
-                switch (plugin)
+                var json = await response.Content.ReadAsStringAsync();
+                var info = JsonSerializer.Deserialize<PluginInfo>(json, new JsonSerializerOptions
                 {
-                    case "cad":
-                        cadVersion = info.version;
-                        cadUpdateDate = info.creationTime;
-                        break;
-                    case "rhino":
-                        rhinoVersion = info.version;
-                        rhinoUpdateDate = info.creationTime;
-                        break;
-                    case "revit":
-                        revitVersion = info.version;
-                        revitUpdateDate = info.creationTime;
-                        break;
-                }
+                    PropertyNameCaseInsensitive = true
+                });
 
-                StateHasChanged();
+                if (info != null)
+                {
+                    switch (plugin)
+                    {
+                        case "cad":
+                            cadVersion = info.version;
+                            cadUpdateDate = info.creationTime;
+                            break;
+                        case "rhino":
+                            rhinoVersion = info.version;
+                            rhinoUpdateDate = info.creationTime;
+                            break;
+                        case "revit":
+                            revitVersion = info.version;
+                            revitUpdateDate = info.creationTime;
+                            break;
+                    }
+
+                    StateHasChanged();
+                }
             }
         }
         catch (Exception ex)
