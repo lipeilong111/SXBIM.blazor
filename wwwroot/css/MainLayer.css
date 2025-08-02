@@ -91,7 +91,6 @@ app {
     border: 1px solid #d0d0d0;
     background: transparent;
     color: white;
-    padding: 0.8rem 3.6rem;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 430;
@@ -107,7 +106,6 @@ app {
 .btn-primary1 {
     background: #0078ff;
     color: white;
-    padding: 0.8rem 3.6rem;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 430;

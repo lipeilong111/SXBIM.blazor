@@ -1,10 +1,23 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
+builder.Services.AddScoped<HttpClient>(sp =>
+{
+    var navigationManager = sp.GetRequiredService<NavigationManager>();
+    return new HttpClient
+    {
+        BaseAddress = new Uri(navigationManager.BaseUri)
+    };
+});
+
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<SXBIM_Login.Services.LoginService>();
@@ -18,11 +31,34 @@ var app = builder.Build();
 //app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/login");
+        return;
+    }
+
+    await next();
+});
+
+
+var provider = new FileExtensionContentTypeProvider();
+provider.Mappings[".dll"] = "application/octet-stream";
+provider.Mappings[".gha"] = "application/octet-stream";
+provider.Mappings[".rhp"] = "application/octet-stream";
+provider.Mappings[".7z"] = "application/octet-stream";
+
+// 添加静态文件中间件
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = provider
+});
+
+
 
 
 app.UseRouting();
-
-
 
 
 //自定义中间件，记录每个请求
@@ -49,8 +85,6 @@ app.Use(async (context, next) =>
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-
-//
 
 app.MapControllers();
 app.Run();

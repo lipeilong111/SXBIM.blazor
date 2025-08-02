@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
 
 <!-- ✅ 顶部导航 -->
 <header class="main-header">
@@ -9,13 +11,36 @@
             <span class="logo-text">三鑫全流程BIM应用</span>
         </a>
 
-        <!-- 操作按钮 -->
-        <div class="header-actions">
-            <a href="#" class="btn-outline">登出</a>
-            <a href="#" class="btn-solid">登录</a>
+        <div class="auth-buttons">
+            <a id="logoutBtn" class="btn btn-logout">@Username</a>
+            <a href="/login" class="btn btn-login" onclick="logout()">登录</a>
         </div>
     </div>
 </header>
+
+@code {
+    private string Username = "未登录";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var user = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
+            if (!string.IsNullOrWhiteSpace(user))
+            {
+                Username = user;
+                StateHasChanged(); // 通知刷新
+            }
+        }
+    }
+
+    private async Task Logout()
+    {
+        await JS.InvokeVoidAsync("sessionStorage.removeItem", "username");
+        Navigation.NavigateTo("/login", forceLoad: true);
+    }
+}
+
 
 <main>
     @Body
@@ -103,61 +128,51 @@
         font-weight: bold;
     }
 
-    .header-actions {
+    .auth-buttons {
         display: flex;
-        gap: 16px;
+        gap: 12px;
         align-items: center;
-        flex-shrink: 0;
-        flex-wrap: nowrap;
     }
 
     .btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0 20px;
-        height: 44px;
-        min-width: 120px;
-        font-size: 16px;
+        min-width: 90px;
+        height: 36px;
+        font-size: 14px;
         font-weight: 500;
-        border-radius: 12px;
-        font-family: 'Segoe UI', sans-serif;
-        transition: all 0.3s ease;
-        white-space: nowrap;
-        box-sizing: border-box;
-    }
-
-    .btn-outline {
-        background-color: #fff;
-        border: 2px solid #000;
-        color: #000;
-        font-size: 16px;
-        border-radius: 12px;
-        width: 100px;
-        height: 44px;
-    }
-
-        .btn-outline:hover {
-            background-color: #f0f0f0;
-        }
-
-    .btn-solid {
-        background-color: #00b140;
-        border: none;
-        color: #fff;
-        font-size: 16px;
-        border-radius: 12px;
-        width: 100px;
-        height: 44px;
-        text-align: center;
         text-decoration: none;
-        line-height: normal;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        font-family: 'Segoe UI', sans-serif;
+        padding: 0 20px;
+        box-shadow: 0 0 0 transparent;
     }
 
-        .btn-solid:hover {
-            background-color: #009533;
+    /* 登出按钮（白底黑边） */
+    .btn-logout {
+        background-color: #ffffff;
+        color: #333;
+        border: 1.5px solid #333;
+    }
+
+        .btn-logout:hover {
+            background-color: #f2f2f2;
+            transform: scale(1.06); /* 放大 6% */
         }
 
+    /* 登录按钮（绿色渐变） */
+    .btn-login {
+        background: linear-gradient(90deg, #00b36b, #00cc88);
+        color: white;
+        border: none;
+    }
+
+        .btn-login:hover {
+            opacity: 0.9;
+            transform: scale(1.06); /* 放大 6% */
+        }
 
     .main-footer {
         background-color: #fff;
