@@ -230,12 +230,18 @@
         var user = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
         var log = new LogRequest
         {
-            Username = user,
+            Username = user == null ? "null" : user,
             Action = "_download_",
             App = Appname
         };
 
-        await Http.PostAsJsonAsync("api/auth/write", log);
+        var client = 请求方法.CreateUnsafeClient(); // 自定义不验证证书的 HttpClient
+        var response = await client.PostAsJsonAsync(请求方法.UrlIP + "/api/auth/write", log);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"❌ 日志写入失败: {response.StatusCode}");
+        }
     }
 
 
@@ -245,7 +251,7 @@
         try
         {
             var client = 请求方法.CreateUnsafeClient();
-            var response = await client.GetAsync("https://192.168.7.194:5001/api/download/file-info?plugin=" + plugin);
+            var response = await client.GetAsync(请求方法.UrlIP + "/api/download/file-info?plugin=" + plugin);
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
