@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\docs\" />
     <Folder Include="wwwroot\icons\" />
     <Folder Include="wwwroot\Protected\" />
   </ItemGroup>

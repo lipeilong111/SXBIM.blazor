@@ -4,22 +4,19 @@
 
 
 
-<div id="loading-screen" style="
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        background: #121212; color: white; font-size: 24px; z-index: 9999;
-        transition: opacity 0.6s ease;">
+<div id="loading-screen">
+   @*  <img src="images/主页加载.png" alt="Logo" /> *@
 
-    <img src="images/主页加载.png" alt="Logo" style="width:100px; height:100px; margin-bottom:20px;">
-    @*   <span>Loading...</span> *@
-
-    <div id="login-form" style="display:flex; flex-direction:column; align-items:center; margin-top: 0px;">
-        <input id="username" placeholder="Username" class="tech-input" />
-        <input id="password" placeholder="Password" type="password" class="tech-input" style="margin-top: 10px;" />
-        <p id="error" style="font-size:14px; color:red; display:none; margin-top:10px;">登陆失败</p>
+    <div id="login-form-wrapper">
+        <div id="login-form">
+            <input id="username" placeholder="Username" class="tech-input" />
+            <input id="password" placeholder="Password" type="password" class="tech-input" />
+            <button id="login-button">登录</button>
+            <p id="error">登陆失败</p>
+        </div>
     </div>
 </div>
-<script src="js/login.js"></script>
+
 
 
 <script>
@@ -29,6 +26,7 @@
         const username = document.getElementById('username');
         const password = document.getElementById('password');
         const error = document.getElementById('error');
+        const loginBtn = document.getElementById('login-button');
 
         if (!username || !password) {
             console.warn("⛔ 输入框没找到！");
@@ -65,6 +63,8 @@
                 }
             });
         });
+        // ✅ 点击按钮登录
+        loginBtn.addEventListener('click', tryLogin);
     }, 200); // ✅ 延迟一点确保 DOM 构建完成
 </script>
 

@@ -84,11 +84,12 @@
         border-top: 1px solid #ddd;
     }
 
-
     body {
         margin: 0;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI', system-ui, sans-serif;
         background: #fff;
+        color: #111827;
+        z-index:1000;
     }
 
     .main-header {
@@ -96,8 +97,13 @@
         justify-content: space-between;
         align-items: center;
         padding: 10px 24px;
-        background-color: white;
-        border-bottom: 2px solid #00b36b;
+        background-color: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+        position: fixed; /* 新增 */
+        top: 0; /* 新增 */
+        left: 0; /* 新增 */
+        width: 100%; /* 新增 */
+        z-index: 1000; /* 新增：避免被内容遮挡 */
     }
 
     .container {
@@ -108,7 +114,6 @@
         justify-content: space-between;
         align-items: center;
     }
-
 
     .logo {
         display: flex;
@@ -124,7 +129,7 @@
 
     .logo-text {
         font-size: 18px;
-        color: #00b36b;
+        color: #333333;
         font-weight: bold;
     }
 
@@ -159,24 +164,24 @@
 
         .btn-logout:hover {
             background-color: #f2f2f2;
-            transform: scale(1.06); /* 放大 6% */
+            transform: scale(1.06);
         }
 
-    /* 登录按钮（绿色渐变） */
+    /* 登录按钮（浅灰色按钮） */
     .btn-login {
-        background: linear-gradient(90deg, #00b36b, #00cc88);
-        color: white;
-        border: none;
+        background-color: #f3f4f6;
+        color: #111827;
+        border: 1px solid #d1d5db;
     }
 
         .btn-login:hover {
-            opacity: 0.9;
-            transform: scale(1.06); /* 放大 6% */
+            background-color: #e5e7eb;
+            transform: scale(1.06);
         }
 
     .main-footer {
-        background-color: #fff;
-        color: #888;
+        background-color: #ffffff;
+        color: #888888;
         font-size: 12px;
         padding: 24px 16px;
         text-align: center;
@@ -217,7 +222,7 @@
         }
 
             .footer-links a:hover {
-                color: #00b36b;
+                color: #111827;
             }
 
     .separator {
@@ -231,4 +236,5 @@
         margin-top: 10px;
         font-size: 12px;
     }
+
 </style>
