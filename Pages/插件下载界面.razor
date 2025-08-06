@@ -167,7 +167,7 @@
 <header class="download-header">
     <h1>三鑫插件下载中心</h1>
     <p>一站式获取三鑫 BIM 工具插件，助力设计与出图效率</p>
-    <button class="download-button">了解三鑫插件生态</button>
+    <button class="download-button" @onclick="GoToSXGZL">了解三鑫插件生态</button>
 </header>
 
 <div class="section">
@@ -363,7 +363,11 @@
 
     private async void GoToDocs()
     {
-        await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000/docs/SX_Cad%20插件使用手册/Section%201%20Product%20Introduction", "_blank");
+        await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000/docs/SX_Cad_插件使用手册/一、产品简介", "_blank");
         //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
+    }
+    private async void GoToSXGZL()
+    {
+        await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000", "_blank");
     }
 }
