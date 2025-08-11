@@ -82,9 +82,78 @@ namespace SXBIM_Login.Controller
 
             return Ok(new { success = true });
         }
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.Username) ||
+                string.IsNullOrWhiteSpace(req.OldPassword) ||
+                string.IsNullOrWhiteSpace(req.NewPassword))
+                return BadRequest(new { success = false, message = "用户名、原密码、新密码不能为空" });
 
+            if (req.NewPassword == req.OldPassword)
+                return BadRequest(new { success = false, message = "新密码不能与原密码相同" });
+
+            if (req.NewPassword.Length < 3)
+                return BadRequest(new { success = false, message = "新密码长度至少为 3 位" });
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            await conn.OpenAsync();
+
+            // 1) 校验旧密码
+            const string checkSql = "SELECT COUNT(*) FROM Users WHERE Username=@u AND Password=@p";
+            using (var checkCmd = new SqlCommand(checkSql, conn))
+            {
+                checkCmd.Parameters.AddWithValue("@u", req.Username);
+                checkCmd.Parameters.AddWithValue("@p", req.OldPassword);
+                var cnt = (int)await checkCmd.ExecuteScalarAsync();
+                if (cnt == 0)
+                    return Unauthorized(new { success = false, message = "原密码不正确" });
+            }
+
+            // 2) 更新新密码
+            const string updateSql = "UPDATE Users SET Password=@np WHERE Username=@u";
+            int rows;
+            using (var updateCmd = new SqlCommand(updateSql, conn))
+            {
+                updateCmd.Parameters.AddWithValue("@u", req.Username);
+                updateCmd.Parameters.AddWithValue("@np", req.NewPassword);
+                rows = await updateCmd.ExecuteNonQueryAsync();
+            }
+            if (rows <= 0)
+                return StatusCode(500, new { success = false, message = "修改密码失败，请稍后重试" });
+
+            // 3) 取真实姓名（仅用于日志打印）
+            string realName;
+            const string realNameQuery = "SELECT RealName FROM Users WHERE Username=@username";
+            using (var nameCmd = new SqlCommand(realNameQuery, conn))
+            {
+                nameCmd.Parameters.AddWithValue("@username", req.Username);
+                var realNameObj = await nameCmd.ExecuteScalarAsync();
+                realName = realNameObj?.ToString() ?? req.Username;
+            }
+
+            // 4) 写操作日志（不含 App 列）
+            const string logSql = @"
+        INSERT INTO OperationLog (Username, Action, ActionTime)
+        VALUES (@username, @action, @time)";
+            using (var logCmd = new SqlCommand(logSql, conn))
+            {
+                logCmd.Parameters.AddWithValue("@username", req.Username);
+                logCmd.Parameters.AddWithValue("@action", "ChangePassword");
+                logCmd.Parameters.AddWithValue("@time", DateTime.Now);
+                await logCmd.ExecuteNonQueryAsync();
+            }
+
+            Console.WriteLine($"[{DateTime.Now}] ------User change password：[{realName}]  原密码: [{req.OldPassword}] -> 新密码: [{req.NewPassword}]");
+            return Ok(new { success = true, message = "密码修改成功" });
+        }
     }
-
+    public class ChangePasswordRequest
+    {
+        public string Username { get; set; } = default!;
+        public string OldPassword { get; set; } = default!;
+        public string NewPassword { get; set; } = default!;
+    }
     public class LoginRequest
     {
         public string Username { get; set; }

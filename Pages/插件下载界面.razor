@@ -188,7 +188,7 @@
         <p>
         </p>
         <div class="button-group">
-            <button @onclick="GoToDocs">文档</button>
+            <button @onclick="GoToDocsCAD">文档</button>
             <button @onclick="downloadCAD">下载</button>
         </div>
     </div>
@@ -209,7 +209,7 @@
         <p>
         </p>
         <div class="button-group">
-            <button @onclick="GoToDocs">文档</button>
+            <button @onclick="GoToDocsRHINO">文档</button>
             <button @onclick="DownloadMultiple">下载</button>
         </div>
     </div>
@@ -230,7 +230,7 @@
         <p>
         </p>
         <div class="button-group">
-            <button @onclick="GoToDocs">文档</button>
+            <button @onclick="GoToDocsREVIT">文档</button>
             <button @onclick="downloadRevit">下载</button>
         </div>
     </div>
@@ -361,9 +361,19 @@
 
 
 
-    private async void GoToDocs()
+    private async void GoToDocsCAD()
     {
         await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000/docs/SX_Cad_插件使用手册/一、产品简介", "_blank");
+        //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
+    }
+    private async void GoToDocsRHINO()
+    {
+        await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000/docs/SX_Snail_插件使用手册/一、产品简介", "_blank");
+        //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
+    }
+    private async void GoToDocsREVIT()
+    {
+        await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000/docs/SX_Revit_插件使用手册/一、产品简介", "_blank");
         //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
     }
     private async void GoToSXGZL()

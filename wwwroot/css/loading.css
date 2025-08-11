@@ -34,7 +34,7 @@
 
 #login-form-wrapper {
     background: white;
-    border: 1px dashed #ccc;
+    border: 1px dashed #747474;
     padding: 16px 20px; /* 原来 20px 30px */
     border-radius: 8px; /* 更小圆角 */
     max-width: 280px;
