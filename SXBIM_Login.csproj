@@ -27,7 +27,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\docs\" />
     <Folder Include="wwwroot\icons\" />
-    <Folder Include="wwwroot\Protected\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://cdn.jsdelivr.net/gh/roadrunner-server/roadrunner@latest/schemas/config/3.0.schema.json" /></VisualStudio></ProjectExtensions>

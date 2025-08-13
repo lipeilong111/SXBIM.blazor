@@ -47,10 +47,14 @@
    
 
     <app>
-        @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
+        @(await Html.RenderComponentAsync<App>(RenderMode.Server))
     </app>
     <script src="_framework/blazor.server.js"></script>
     <script src="js/speckle.js"></script>
     <script src="js/login.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="js/analytics.js"></script>
 </body>
 </html>

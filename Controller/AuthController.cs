@@ -172,7 +172,7 @@ namespace SXBIM_Login.Controller
 
     public class 请求方法
     {
-        public static string UrlIP= "https://192.168.7.194:5001";
+        public static string UrlIP= "http://192.168.7.194";
         public static HttpClient CreateUnsafeClient()
         {
             var handler = new HttpClientHandler

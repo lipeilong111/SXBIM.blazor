@@ -10,11 +10,12 @@
     body {
         margin: 0;
         font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-        background-color: #fafafa;
+        background-color: #f9fafb; /* 文档亮色背景 */
         color: #111827;
-        padding-top: 72px; /* 根据 header 高度设定 */
+        padding-top: 72px;
     }
 
+    /* 顶部标题区 */
     .download-header {
         background-color: #ffffff;
         color: #111827;
@@ -23,7 +24,7 @@
         border-bottom: 1px solid #e5e7eb;
         position: relative;
         overflow: hidden;
-        z-index: 0; /* 确保在普通元素层级 */
+        z-index: 0;
     }
 
         .download-header::before {
@@ -31,13 +32,7 @@
             position: absolute;
             inset: 0;
             z-index: 1;
-            background-image:
-            /* 横向线条 */
-            linear-gradient(to right, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
-            /* 纵向线条 */
-            linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
-            /* 烟雾 */
-            radial-gradient(circle at 30% 30%, rgba(0, 0, 0, 0.1), transparent 60%), radial-gradient(circle at 70% 70%, rgba(0, 0, 0, 0.03), transparent 70%);
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px), radial-gradient(circle at 30% 30%, rgba(0, 0, 0, 0.06), transparent 60%), radial-gradient(circle at 70% 70%, rgba(0, 0, 0, 0.02), transparent 70%);
             background-size: 60px 60px, 60px 60px, 300px 300px, 400px 400px;
             background-repeat: repeat;
             pointer-events: none;
@@ -45,58 +40,192 @@
 
         .download-header h1 {
             margin: 0;
-            font-size: 36px;
-            font-weight: 600;
+            font-size: 58px; /* 改成和文档一样大 */
+            font-weight: 1200; /* 更粗的黑体 */
+            color: #0A0A0A; /* 纯黑字体 */
+            line-height: 1.2;
         }
 
         .download-header p {
             font-size: 16px;
-            margin-top: 10px;
-            color: #6b7280;
+            margin-top: 12px;
+            color: #4b5563; /* 文档副标题的灰色 */
+            font-weight: 400;
         }
 
+
+    /* 顶部按钮 */
     .download-button {
         margin-top: 20px;
         padding: 10px 20px;
-        background-color: #f9f9f9;
+        background-color: #ffffff;
         color: #111827;
         border: 1px solid #d1d5db;
-        border-radius: 6px;
+        border-radius: 8px;
         font-size: 14px;
         cursor: pointer;
-        transition: background-color 0.2s ease;
+        transition: all 0.2s ease;
         z-index: 2;
         position: relative;
-        font-weight: bold;
+        font-weight: 600;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
         .download-button:hover {
             background-color: #f3f4f6;
+            transform: translateY(-1px);
         }
 
+    /* 内容区 */
     .section {
         display: flex;
         justify-content: center;
         gap: 45px;
         padding: 40px 20px;
         flex-wrap: wrap;
-        background-color: #fafafa;
+        background-color: #f9fafb;
     }
 
+    /* 卡片样式 */
     .card {
         background-color: #ffffff;
         border: 1px solid #e5e7eb;
-        border-radius: 10px;
-        padding: 24px;
+        border-radius: 12px;
+        padding: 21px;
         width: 320px;
+        height: 270px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        transition: box-shadow 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+        /* 光效准备 */
+        position: relative;
+        isolation: isolate; /* 让光效层混合更自然 */
+        overflow: visible;
     }
 
+
+
+    /* —— 更新日志角标与浮层 —— */
+    .changelog {
+        position: absolute;
+        top: 34px;
+        right: 29px;
+        z-index: 5;
+    }
+
+    .changelog-badge {
+        display: inline-block;
+        font-size: 12px;
+        line-height: 1;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: white;
+        color: gray;
+        cursor: default;
+        box-shadow: 0 4px 10px rgba(0,0,0,.12);
+        user-select: none;
+    }
+
+    /* 悬浮面板（默认隐藏） */
+    .changelog-popover {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        width: 320px;
+        max-height: 290px;
+        overflow: auto;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: rgba(0, 0, 0, .78); /* 半透明 */
+        color: #fff;
+        backdrop-filter: blur(6px);
+        box-shadow: 0 12px 30px rgba(0,0,0,.25);
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: opacity .18s ease, transform .18s ease;
+        z-index: 10;
+        font-size: 13px; /* 改这里：整体变大/变小 */
+        line-height: 1.55;
+    }
+
+        /* 小三角 */
+        .changelog-popover::after {
+            content: "";
+            position: absolute;
+            right: 18px;
+            top: -6px;
+            width: 12px;
+            height: 12px;
+            background: black;
+            transform: rotate(45deg);
+            filter: blur(.2px);
+        }
+
+    /* 悬停显示 */
+    .changelog:hover .changelog-popover {
+        pointer-events: auto;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* 内部排版 */
+    .changelog-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        opacity: .95;
+    }
+
+    .changelog-list {
+        margin: 0;
+        padding-left: 18px;
+    }
+
+        .changelog-list li {
+            margin: 4px 0;
+            line-height: 1.5;
+            opacity: .95;
+            word-break: break-word;
+        }
+
+    /* 无鼠标时也可键盘聚焦触发 */
+    .changelog-badge:focus + .changelog-popover,
+    .changelog-badge:focus-visible + .changelog-popover {
+        pointer-events: auto;
+        opacity: 1;
+        transform: translateY(0);
+        outline: none;
+    }
+
+
+
+
+
+
+
+
+
+
+        /* 悬浮只保留阴影效果 */
         .card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+            border-color: #e3e6ea;
+        }
+
+       
+
+        /* 固定的柔和泛光 */
+        .card::after {
+            content: "";
+            position: absolute;
+            inset: -18%;
+            background: radial-gradient(120px 80px at 20% 0%, rgba(59,130,246,0.16), rgba(59,130,246,0) 60%), radial-gradient(160px 120px at 80% 110%, rgba(255,255,255,0.40), rgba(255,255,255,0) 70%);
+            opacity: .55;
+            filter: blur(6px);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .card h3 {
@@ -104,8 +233,11 @@
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 12px;
-            gap: 12px; /* 徽章和标题之间的间距 */
+            gap: 12px;
             display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 1; /* 让文字在光效之上 */
         }
 
         .card p {
@@ -113,8 +245,12 @@
             color: #374151;
             margin: 6px 0;
             line-height: 1.6;
+            position: relative;
+            z-index: 1;
         }
 
+
+    /* 平台说明文字 */
     .platform {
         margin-top: auto;
         font-weight: 500;
@@ -122,14 +258,11 @@
         color: #6b7280;
     }
 
-    .spacer {
-        flex-grow: 1;
-    }
-
+    /* 按钮组 */
     .button-group {
         display: flex;
         justify-content: space-between;
-        margin-top: 16px;
+        margin-top: 0px;
     }
 
         .button-group button {
@@ -138,31 +271,35 @@
             padding: 8px 12px;
             border: 1px solid #e5e7eb;
             border-radius: 6px;
-            background-color: #f9f9f9;
+            background-color: #ffffff;
             color: #111827;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         }
 
             .button-group button:hover {
-                background-color: #f3f4f6;
+                background-color: #f9fafb;
                 transform: scale(1.02);
             }
 
+    /* 徽章 */
     .badge {
         width: 24px;
         height: 24px;
-        background-color: #111; /* 黑色背景 */
-        color: #fff; /* 白色文字 */
-        border-radius: 50%; /* 圆形 */
+        background-color: #0A0A0A; /* 蓝色徽章 */
+        color: #ffffff;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 14px;
         font-weight: bold;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
+
 </style>
 <header class="download-header">
     <h1>三鑫插件下载中心</h1>
@@ -172,6 +309,26 @@
 
 <div class="section">
     <div class="card">
+        @if (_updateLog != null && _updateLog.TryGetValue("sxcad", out var cadLog) && cadLog.Releases?.Count > 0)
+        {
+            <div class="changelog">
+                <span class="changelog-badge" tabindex="0">更新日志</span>
+                <div class="changelog-popover">
+                    @foreach (var release in cadLog.Releases.OrderByDescending(r => r.Version))
+                    {
+                        <div class="changelog-title">@($"---V{release.Version}---")</div>
+                        <ul class="changelog-list">
+                            @foreach (var note in release.Notes)
+                            {
+                                <li>@note</li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        }
+
+
         <h3>
             <span class="badge">1</span>
             SX_Cad
@@ -194,6 +351,27 @@
     </div>
 
     <div class="card">
+
+        @if (_updateLog != null && _updateLog.TryGetValue("sxsnail", out var snailLog) && snailLog.Releases?.Count > 0)
+        {
+            <div class="changelog">
+                <span class="changelog-badge" tabindex="0">更新日志</span>
+                <div class="changelog-popover">
+                    @foreach (var release in snailLog.Releases.OrderByDescending(r => r.Version))
+                    {
+                        <div class="changelog-title">@($"---V{release.Version}---")</div>
+                        <ul class="changelog-list">
+                            @foreach (var note in release.Notes)
+                            {
+                                <li>@note</li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        }
+
+
         <h3>
             <span class="badge">2</span>SX_Snail
         </h3>
@@ -215,6 +393,25 @@
     </div>
 
     <div class="card">
+        @if (_updateLog != null && _updateLog.TryGetValue("sxrevit", out var revitLog) && revitLog.Releases?.Count > 0)
+        {
+            <div class="changelog">
+                <span class="changelog-badge" tabindex="0">更新日志</span>
+                <div class="changelog-popover">
+                    @foreach (var release in revitLog.Releases.OrderByDescending(r => r.Version))
+                    {
+                        <div class="changelog-title">@($"---V{release.Version}---")</div>
+                        <ul class="changelog-list">
+                            @foreach (var note in release.Notes)
+                            {
+                                <li>@note</li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        }
+
         <h3>
             <span class="badge">3</span>SX_Revit
         </h3>
@@ -237,6 +434,38 @@
 </div>
 
 @code {
+    // 更新日志（wwwroot/update-log.json）
+    private Dictionary<string, UpdateItem> _updateLog;
+
+    public class UpdateItem
+    {
+        public string Name { get; set; }
+        public List<ReleaseInfo> Releases { get; set; }
+    }
+
+    public class ReleaseInfo
+    {
+        public string Version { get; set; }
+        public List<string> Notes { get; set; }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     private bool _checked = false;
 
     private string cadVersion = "";
@@ -266,37 +495,53 @@
             await LoadPluginInfo("cad");
             await LoadPluginInfo("rhino");
             await LoadPluginInfo("revit");
+
+
+            await LoadUpdateLog();
+
             StateHasChanged();
         }
 
     }
-
+    private async Task LoadUpdateLog()
+    {
+        try
+        {
+            // 相对路径指向 wwwroot/update-log.json
+            using var stream = await Http.GetStreamAsync("Protected/changelogs.json");
+            _updateLog = await JsonSerializer.DeserializeAsync<Dictionary<string, UpdateItem>>(stream,new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ 读取更新日志失败: {ex.Message}");
+        }
+    }
 
 
     private async Task DownloadMultiple()
     {
         await JS.InvokeVoidAsync("downloadMultipleFiles");
-        await WriteDownloadLog("rhino");
+        await WriteDownloadLog("rhino", "_download_");
     }
     private async Task downloadCAD()
     {
         await JS.InvokeVoidAsync("downloadCAD");
-        await WriteDownloadLog("cad");
+        await WriteDownloadLog("cad", "_download_");
     }
     private async Task downloadRevit()
     {
         await JS.InvokeVoidAsync("downloadRevit");
-        await WriteDownloadLog("revit");
+        await WriteDownloadLog("revit", "_download_");
     }
 
 
-    private async Task WriteDownloadLog(string Appname)
+    private async Task WriteDownloadLog(string Appname, string Action)
     {
         var user = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
         var log = new LogRequest
         {
             Username = user == null ? "null" : user,
-            Action = "_download_",
+            Action = Action,
             App = Appname
         };
 
@@ -364,20 +609,24 @@
     private async void GoToDocsCAD()
     {
         await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000/docs/SX_Cad_插件使用手册/一、产品简介", "_blank");
+        await WriteDownloadLog("cad", "查看cad文档");
         //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
     }
     private async void GoToDocsRHINO()
     {
         await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000/docs/SX_Snail_插件使用手册/一、产品简介", "_blank");
+        await WriteDownloadLog("rhino", "查看rhino文档");
         //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
     }
     private async void GoToDocsREVIT()
     {
         await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000/docs/SX_Revit_插件使用手册/一、产品简介", "_blank");
+        await WriteDownloadLog("revit", "查看revit文档");
         //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
     }
     private async void GoToSXGZL()
     {
         await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000", "_blank");
+        await WriteDownloadLog("system", "查看工作流文档");
     }
 }

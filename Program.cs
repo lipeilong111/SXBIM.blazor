@@ -26,9 +26,10 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ListenAnyIP(80);
 });
+builder.WebHost.UseKestrel();
 
 var app = builder.Build();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.Use(async (context, next) =>
@@ -64,7 +65,8 @@ app.UseStaticFiles(new StaticFileOptions
 
 
 app.UseRouting();
-
+app.MapRazorPages();
+app.MapControllers();
 
 //自定义中间件，记录每个请求
 app.Use(async (context, next) =>

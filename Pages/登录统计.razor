@@ -1,0 +1,385 @@
+﻿@page "/analytics"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+@if (!_authChecked)
+{
+    <div style="padding:24px;color:#6b7280;margin-top:100px;">正在校验访问权限…</div>
+}
+else if (!_isAdmin)
+{
+    <div style="padding:28px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;max-width:720px;margin:100px auto 0;">
+        <h3 style="margin:0 0 8px;">无权访问</h3>
+        <div style="color:#6b7280">此页面你无权访问。</div>
+    </div>
+}
+else
+{
+    <div class="analytics-container">
+
+        <!-- 顶部 Tab -->
+        <div class="tab-header">
+            <button class="@(activeTab == "login" ? "active" : "")" @onclick='() => SwitchTab("login")'>登录</button>
+            <button class="@(activeTab == "op" ? "active" : "")" @onclick='() => SwitchTab("op")'>操作</button>
+        </div>
+
+        <!-- 粒度切换（日/月/年） -->
+        <div class="seg">
+            <span>展示粒度：</span>
+            @if (activeTab == "login")
+            {
+                <button class="@(loginBucket == Bucket.Day ? "active" : "")" @onclick='() => ChangeBucket(Bucket.Day)'>日</button>
+                <button class="@(loginBucket == Bucket.Month ? "active" : "")" @onclick='() => ChangeBucket(Bucket.Month)'>月</button>
+                <button class="@(loginBucket == Bucket.Year ? "active" : "")" @onclick='() => ChangeBucket(Bucket.Year)'>年</button>
+            }
+            else
+            {
+                <button class="@(opBucket == Bucket.Day ? "active" : "")" @onclick='() => ChangeBucket(Bucket.Day)'>日</button>
+                <button class="@(opBucket == Bucket.Month ? "active" : "")" @onclick='() => ChangeBucket(Bucket.Month)'>月</button>
+                <button class="@(opBucket == Bucket.Year ? "active" : "")" @onclick='() => ChangeBucket(Bucket.Year)'>年</button>
+            }
+        </div>
+
+
+        <style>
+            .analytics-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                padding-top: 80px;
+            }
+
+            .tab-header {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 14px;
+            }
+
+                .tab-header button {
+                    padding: 8px 16px;
+                    background: #f3f4f6;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: 600;
+                }
+
+                    .tab-header button.active {
+                        background: #2563eb;
+                        color: #fff;
+                    }
+
+            .seg {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 6px 0 14px;
+            }
+
+                .seg button {
+                    padding: 6px 12px;
+                    border: 1px solid #e5e7eb;
+                    background: #fff;
+                    border-radius: 8px;
+                    cursor: pointer;
+                }
+
+                    .seg button.active {
+                        background: #111;
+                        color: #fff;
+                        border-color: #111;
+                    }
+
+            .section-block {
+                margin-bottom: 28px;
+            }
+
+                .section-block h3 {
+                    margin: 0 0 10px;
+                    font-size: 18px;
+                    font-weight: 700;
+                }
+
+            .chart-box {
+                width: 100%;
+                height: 320px;
+                background: #fff;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 12px;
+            }
+
+            .table {
+                width: 100%;
+                border-collapse: collapse;
+                background: #fff;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+
+                .table th, .table td {
+                    padding: 8px 12px;
+                    border-bottom: 1px solid #f1f5f9;
+                    text-align: left;
+                }
+
+                .table thead th {
+                    background: #f8fafc;
+                    font-weight: 600;
+                }
+
+            .table-head {
+                display: flex;
+                justify-content: space-between;
+                margin: 10px 0 6px;
+                color: #6b7280;
+            }
+
+            .error-tip {
+                color: #ef4444;
+                margin-top: 10px;
+            }
+
+        </style>
+
+
+        @if (activeTab == "login")
+        {
+            <div class="section-block">
+                <h3>登录统计</h3>
+                <canvas id="login-chart" class="chart-box"></canvas>
+
+                <div class="table-head"><strong>最新登录记录（Top 50）</strong></div>
+                <table class="table">
+                    <thead>
+                        <tr><th>时间</th><th>用户</th><th>应用</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in loginLatest50)
+                        {
+                            <tr>
+                                <td>@r.LoginTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td>@r.Username</td>
+                                <td>@r.App</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="section-block">
+                <h3>操作统计</h3>
+                <canvas id="op-chart" class="chart-box"></canvas>
+
+                <div class="table-head"><strong>最新操作记录（Top 50）</strong></div>
+                <table class="table">
+                    <thead>
+                        <tr><th>时间</th><th>用户</th><th>操作</th><th>应用</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in opLatest50)
+                        {
+                            <tr>
+                                <td>@r.ActionTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td>@r.Username</td>
+                                <td>@r.Action</td>
+                                <td>@r.App</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(lastError))
+        {
+            <div class="error-tip">错误：@lastError</div>
+        }
+    </div>
+}
+
+
+
+
+
+
+
+@code {
+    private bool _authChecked = false;
+    private bool _isAdmin = false;
+
+
+    // ====== 改成你的接口地址（返回“全量原始记录”）======
+    private const string LoginAllUrl = "/api/stats/login-all";
+    private const string OpAllUrl = "/api/stats/op-all";
+    // ====================================================
+
+    // 强类型模型（与我给你的接口字段完全对齐）
+    public class LoginRecord
+    {
+        public DateTime LoginTime { get; set; }
+        public string Username { get; set; } = "";
+        public string App { get; set; } = "";
+    }
+    public class OpRecord
+    {
+        public DateTime ActionTime { get; set; }
+        public string Username { get; set; } = "";
+        public string Action { get; set; } = "";
+        public string App { get; set; } = "";
+    }
+
+    // 聚合点
+    public record CountPoint(string Date, int Count);
+
+    // Tab & 粒度
+    private string activeTab = "login";
+    private enum Bucket { Day, Month, Year }
+    private Bucket loginBucket = Bucket.Day;
+    private Bucket opBucket = Bucket.Day;
+
+    // 原始数据
+    private List<LoginRecord> loginAll = new();
+    private List<OpRecord> opAll = new();
+
+    // 表格数据（Top50）
+    private List<LoginRecord> loginLatest50 = new();
+    private List<OpRecord> opLatest50 = new();
+
+    // 聚合结果（传给图表）
+    private List<CountPoint> loginAgg = new();
+    private List<CountPoint> opAgg = new();
+
+    private string? lastError;
+    private bool _needRenderLoginChart, _needRenderOpChart;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAll();
+    }
+
+    private async Task LoadAll()
+    {
+        try
+        {
+            lastError = null;
+
+            // 拉全量原始记录（强类型反序列化，避免大小写/字段名错位）
+            loginAll = await Http.GetFromJsonAsync<List<LoginRecord>>(LoginAllUrl) ?? new();
+            opAll = await Http.GetFromJsonAsync<List<OpRecord>>(OpAllUrl) ?? new();
+
+            // 最新 50
+            loginLatest50 = loginAll.OrderByDescending(x => x.LoginTime).Take(50).ToList();
+            opLatest50 = opAll.OrderByDescending(x => x.ActionTime).Take(50).ToList();
+
+            // 初始聚合：日
+            loginAgg = GroupByBucket(loginAll.Select(x => x.LoginTime), loginBucket);
+            opAgg = GroupByBucket(opAll.Select(x => x.ActionTime), opBucket);
+
+            _needRenderLoginChart = true;
+            _needRenderOpChart = true;
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            lastError = ex.Message;
+        }
+    }
+
+    private static List<CountPoint> GroupByBucket(IEnumerable<DateTime> times, Bucket b)
+    {
+        IEnumerable<IGrouping<string, DateTime>> grouped = b switch
+        {
+            Bucket.Year => times.GroupBy(t => t.ToString("yyyy")),
+            Bucket.Month => times.GroupBy(t => t.ToString("yyyy-MM")),
+            _ => times.GroupBy(t => t.ToString("yyyy-MM-dd")),
+        };
+        return grouped.OrderBy(g => g.Key).Select(g => new CountPoint(g.Key, g.Count())).ToList();
+    }
+
+    private void SwitchTab(string tab)
+    {
+        activeTab = tab;
+        if (tab == "login") _needRenderLoginChart = true;
+        else _needRenderOpChart = true;
+        StateHasChanged();
+    }
+
+    private void ChangeBucket(Bucket b)
+    {
+        if (activeTab == "login")
+        {
+            loginBucket = b;
+            loginAgg = GroupByBucket(loginAll.Select(x => x.LoginTime), loginBucket);
+            _needRenderLoginChart = true;
+        }
+        else
+        {
+            opBucket = b;
+            opAgg = GroupByBucket(opAll.Select(x => x.ActionTime), opBucket);
+            _needRenderOpChart = true;
+        }
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            // ① 先做一次性权限校验（从 sessionStorage 取）
+            if (!_authChecked)
+            {
+#if DEBUG
+            // 如果调试期想强制放行，取消下一行注释
+             //_isAdmin = true; _authChecked = true; StateHasChanged(); return;
+#endif
+                var isLoggedIn = await JS.InvokeAsync<string>("sessionStorage.getItem", "isLoggedIn");
+                var username = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
+
+                _isAdmin = (isLoggedIn == "true" &&
+                            string.Equals(username, "admin", StringComparison.OrdinalIgnoreCase));
+                _authChecked = true;
+
+                // 校验刚完成，需要刷新一次让界面显示“无权访问”或继续走后面的渲染
+                await InvokeAsync(StateHasChanged);
+                // 结束本轮，等下一轮再根据 _isAdmin 决定是否画图
+                return;
+            }
+
+            // ② 非管理员直接不渲染图表（你可以在界面上用条件渲染显示“无权访问”）
+            if (!_isAdmin)
+            {
+                return;
+                // 或者要跳走：
+                // Nav.NavigateTo("/login", true);
+            }
+
+            // ③ 管理员才渲染图表
+            if (_needRenderLoginChart && activeTab == "login")
+            {
+                await JS.InvokeVoidAsync("renderBarChart", "login-chart", loginAgg, $"登录（{BucketText(loginBucket)}）");
+                _needRenderLoginChart = false;
+            }
+            if (_needRenderOpChart && activeTab == "op")
+            {
+                await JS.InvokeVoidAsync("renderBarChart", "op-chart", opAgg, $"操作（{BucketText(opBucket)}）");
+                _needRenderOpChart = false;
+            }
+        }
+        catch
+        {
+            // 预渲染阶段或偶发 JS 异常：忽略本轮，下一轮会重试
+        }
+    }
+
+    private static string BucketText(Bucket b) => b switch
+    {
+        Bucket.Month => "月",
+        Bucket.Year => "年",
+        _ => "日"
+    };
+}
