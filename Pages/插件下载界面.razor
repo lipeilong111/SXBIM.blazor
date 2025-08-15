@@ -398,7 +398,7 @@
             <div class="changelog">
                 <span class="changelog-badge" tabindex="0">更新日志</span>
                 <div class="changelog-popover">
-                    @foreach (var release in revitLog.Releases.OrderByDescending(r => r.Version))
+                    @foreach (var release in revitLog.Releases)
                     {
                         <div class="changelog-title">@($"---V{release.Version}---")</div>
                         <ul class="changelog-list">

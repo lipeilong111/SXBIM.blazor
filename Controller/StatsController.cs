@@ -30,18 +30,22 @@ namespace SXBIM_Login.Controller
 
             var sql = @"
 SELECT {TOP}
-       LoginTime, Username, App
-FROM dbo.LoginHistory WITH (NOLOCK)
+       L.LoginTime,
+       L.Username,
+       ISNULL(U.RealName, L.Username) AS RealName,
+       L.App
+FROM dbo.LoginHistory AS L WITH (NOLOCK)
+LEFT JOIN dbo.Users      AS U WITH (NOLOCK) ON U.Username = L.Username
 WHERE 1=1
   {W_FROM}
   {W_TO}
   {W_APP}
-ORDER BY LoginTime ASC;";
+ORDER BY L.LoginTime ASC;";
 
             // 组装 where
-            var where_from = from.HasValue ? "AND LoginTime >= @from" : "";
-            var where_to = to.HasValue ? "AND LoginTime <= @to" : "";
-            var where_app = !string.IsNullOrWhiteSpace(app) ? "AND App = @app" : "";
+            var where_from = from.HasValue ? "AND L.LoginTime >= @from" : "";
+            var where_to = to.HasValue ? "AND L.LoginTime <= @to" : "";
+            var where_app = !string.IsNullOrWhiteSpace(app) ? "AND L.App = @app" : "";
             sql = sql.Replace("{W_FROM}", where_from)
                      .Replace("{W_TO}", where_to)
                      .Replace("{W_APP}", where_app)
@@ -53,14 +57,21 @@ ORDER BY LoginTime ASC;";
             if (!string.IsNullOrWhiteSpace(app)) cmd.Parameters.Add(new SqlParameter("@app", SqlDbType.NVarChar, 50) { Value = app! });
 
             using var rd = cmd.ExecuteReader();
+
+            // 用列名获取序号，避免列顺序变化
+            int ordLoginTime = rd.GetOrdinal("LoginTime");
+            int ordUsername = rd.GetOrdinal("Username");
+            int ordRealName = rd.GetOrdinal("RealName");
+            int ordApp = rd.GetOrdinal("App");
+
             while (rd.Read())
             {
                 rows.Add(new
                 {
-                    // 前端已做宽容映射，这里统一字段名更省心
-                    LoginTime = rd.GetDateTime(0),
-                    Username = rd.GetString(1),
-                    App = rd.IsDBNull(2) ? "" : rd.GetString(2)
+                    LoginTime = rd.GetDateTime(ordLoginTime),
+                    Username = rd.GetString(ordUsername),
+                    RealName = rd.IsDBNull(ordRealName) ? rd.GetString(ordUsername) : rd.GetString(ordRealName),
+                    App = rd.IsDBNull(ordApp) ? "" : rd.GetString(ordApp)
                 });
             }
             return Ok(rows);
@@ -78,17 +89,22 @@ ORDER BY LoginTime ASC;";
 
             var sql = @"
 SELECT {TOP}
-       ActionTime, Username, [Action], App
-FROM dbo.OperationLog WITH (NOLOCK)
+       O.ActionTime,
+       O.Username,
+       ISNULL(U.RealName, O.Username) AS RealName,
+       O.[Action],
+       O.App
+FROM dbo.OperationLog AS O WITH (NOLOCK)
+LEFT JOIN dbo.Users    AS U WITH (NOLOCK) ON U.Username = O.Username
 WHERE 1=1
   {W_FROM}
   {W_TO}
   {W_APP}
-ORDER BY ActionTime ASC;";
+ORDER BY O.ActionTime ASC;";
 
-            var where_from = from.HasValue ? "AND ActionTime >= @from" : "";
-            var where_to = to.HasValue ? "AND ActionTime <= @to" : "";
-            var where_app = !string.IsNullOrWhiteSpace(app) ? "AND App = @app" : "";
+            var where_from = from.HasValue ? "AND O.ActionTime >= @from" : "";
+            var where_to = to.HasValue ? "AND O.ActionTime <= @to" : "";
+            var where_app = !string.IsNullOrWhiteSpace(app) ? "AND O.App = @app" : "";
             sql = sql.Replace("{W_FROM}", where_from)
                      .Replace("{W_TO}", where_to)
                      .Replace("{W_APP}", where_app)
@@ -100,14 +116,22 @@ ORDER BY ActionTime ASC;";
             if (!string.IsNullOrWhiteSpace(app)) cmd.Parameters.Add(new SqlParameter("@app", SqlDbType.NVarChar, 50) { Value = app! });
 
             using var rd = cmd.ExecuteReader();
+
+            int ordActionTime = rd.GetOrdinal("ActionTime");
+            int ordUsername = rd.GetOrdinal("Username");
+            int ordRealName = rd.GetOrdinal("RealName");
+            int ordAction = rd.GetOrdinal("Action");
+            int ordApp = rd.GetOrdinal("App");
+
             while (rd.Read())
             {
                 rows.Add(new
                 {
-                    ActionTime = rd.GetDateTime(0),
-                    Username = rd.GetString(1),
-                    Action = rd.IsDBNull(2) ? "" : rd.GetString(2),
-                    App = rd.IsDBNull(3) ? "" : rd.GetString(3)
+                    ActionTime = rd.GetDateTime(ordActionTime),
+                    Username = rd.GetString(ordUsername),
+                    RealName = rd.IsDBNull(ordRealName) ? rd.GetString(ordUsername) : rd.GetString(ordRealName),
+                    Action = rd.IsDBNull(ordAction) ? "" : rd.GetString(ordAction),
+                    App = rd.IsDBNull(ordApp) ? "" : rd.GetString(ordApp)
                 });
             }
             return Ok(rows);

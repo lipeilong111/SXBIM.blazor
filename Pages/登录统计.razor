@@ -142,6 +142,26 @@ else
                 margin-top: 10px;
             }
 
+            /* 分页样式 */
+            .pager {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 10px 0 0;
+            }
+
+                .pager button {
+                    padding: 6px 10px;
+                    border: 1px solid #e5e7eb;
+                    background: #fff;
+                    border-radius: 8px;
+                    cursor: pointer;
+                }
+
+                    .pager button[disabled] {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                    }
         </style>
 
 
@@ -151,22 +171,33 @@ else
                 <h3>登录统计</h3>
                 <canvas id="login-chart" class="chart-box"></canvas>
 
-                <div class="table-head"><strong>最新登录记录（Top 50）</strong></div>
+                <div class="table-head">
+                    <strong>登录记录</strong>
+                    <span>第 @loginPage / @LoginTotalPages 页，共 @loginAll.Count 条</span>
+                </div>
                 <table class="table">
                     <thead>
                         <tr><th>时间</th><th>用户</th><th>应用</th></tr>
                     </thead>
                     <tbody>
-                        @foreach (var r in loginLatest50)
+                        @foreach (var r in LoginPageItems)
                         {
                             <tr>
                                 <td>@r.LoginTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                                <td>@r.Username</td>
+                                <td>@(string.IsNullOrWhiteSpace(r.RealName) ? r.Username : r.RealName)</td>
                                 <td>@r.App</td>
                             </tr>
                         }
                     </tbody>
                 </table>
+
+                <div class="pager">
+                    <button @onclick="() => ChangeLoginPage(1)" disabled="@(loginPage == 1)">«</button>
+                    <button @onclick="() => ChangeLoginPage(loginPage - 1)" disabled="@(loginPage == 1)">‹</button>
+                    <span>第 @loginPage / @LoginTotalPages 页</span>
+                    <button @onclick="() => ChangeLoginPage(loginPage + 1)" disabled="@(loginPage == LoginTotalPages)">›</button>
+                    <button @onclick="() => ChangeLoginPage(LoginTotalPages)" disabled="@(loginPage == LoginTotalPages)">»</button>
+                </div>
             </div>
         }
         else
@@ -175,23 +206,34 @@ else
                 <h3>操作统计</h3>
                 <canvas id="op-chart" class="chart-box"></canvas>
 
-                <div class="table-head"><strong>最新操作记录（Top 50）</strong></div>
+                <div class="table-head">
+                    <strong>操作记录</strong>
+                    <span>第 @opPage / @OpTotalPages 页，共 @opAll.Count 条</span>
+                </div>
                 <table class="table">
                     <thead>
                         <tr><th>时间</th><th>用户</th><th>操作</th><th>应用</th></tr>
                     </thead>
                     <tbody>
-                        @foreach (var r in opLatest50)
+                        @foreach (var r in OpPageItems)
                         {
                             <tr>
                                 <td>@r.ActionTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                                <td>@r.Username</td>
+                                <td>@(string.IsNullOrWhiteSpace(r.RealName) ? r.Username : r.RealName)</td>
                                 <td>@r.Action</td>
                                 <td>@r.App</td>
                             </tr>
                         }
                     </tbody>
                 </table>
+
+                <div class="pager">
+                    <button @onclick="() => ChangeOpPage(1)" disabled="@(opPage == 1)">«</button>
+                    <button @onclick="() => ChangeOpPage(opPage - 1)" disabled="@(opPage == 1)">‹</button>
+                    <span>第 @opPage / @OpTotalPages 页</span>
+                    <button @onclick="() => ChangeOpPage(opPage + 1)" disabled="@(opPage == OpTotalPages)">›</button>
+                    <button @onclick="() => ChangeOpPage(OpTotalPages)" disabled="@(opPage == OpTotalPages)">»</button>
+                </div>
             </div>
         }
 
@@ -206,29 +248,28 @@ else
 
 
 
-
-
 @code {
     private bool _authChecked = false;
     private bool _isAdmin = false;
 
-
-    // ====== 改成你的接口地址（返回“全量原始记录”）======
+    // ====== 接口地址（返回全量原始记录）======
     private const string LoginAllUrl = "/api/stats/login-all";
     private const string OpAllUrl = "/api/stats/op-all";
-    // ====================================================
+    // ========================================
 
-    // 强类型模型（与我给你的接口字段完全对齐）
+    // 强类型模型（与接口字段一致）
     public class LoginRecord
     {
         public DateTime LoginTime { get; set; }
         public string Username { get; set; } = "";
+        public string RealName { get; set; } = "";
         public string App { get; set; } = "";
     }
     public class OpRecord
     {
         public DateTime ActionTime { get; set; }
         public string Username { get; set; } = "";
+        public string RealName { get; set; } = "";
         public string Action { get; set; } = "";
         public string App { get; set; } = "";
     }
@@ -246,9 +287,23 @@ else
     private List<LoginRecord> loginAll = new();
     private List<OpRecord> opAll = new();
 
-    // 表格数据（Top50）
-    private List<LoginRecord> loginLatest50 = new();
-    private List<OpRecord> opLatest50 = new();
+    // ===== 分页配置 =====
+    private int pageSize = 10;     // 每页 10 条
+    private int loginPage = 1;     // 登录当前页
+    private int opPage = 1;        // 操作当前页
+
+    private int LoginTotalPages => Math.Max(1, (int)Math.Ceiling(loginAll.Count / (double)pageSize));
+    private int OpTotalPages => Math.Max(1, (int)Math.Ceiling(opAll.Count / (double)pageSize));
+
+    private IEnumerable<LoginRecord> LoginPageItems =>
+        loginAll.OrderByDescending(x => x.LoginTime)
+                .Skip((loginPage - 1) * pageSize)
+                .Take(pageSize);
+
+    private IEnumerable<OpRecord> OpPageItems =>
+        opAll.OrderByDescending(x => x.ActionTime)
+             .Skip((opPage - 1) * pageSize)
+             .Take(pageSize);
 
     // 聚合结果（传给图表）
     private List<CountPoint> loginAgg = new();
@@ -268,13 +323,13 @@ else
         {
             lastError = null;
 
-            // 拉全量原始记录（强类型反序列化，避免大小写/字段名错位）
+            // 拉全量原始记录
             loginAll = await Http.GetFromJsonAsync<List<LoginRecord>>(LoginAllUrl) ?? new();
             opAll = await Http.GetFromJsonAsync<List<OpRecord>>(OpAllUrl) ?? new();
 
-            // 最新 50
-            loginLatest50 = loginAll.OrderByDescending(x => x.LoginTime).Take(50).ToList();
-            opLatest50 = opAll.OrderByDescending(x => x.ActionTime).Take(50).ToList();
+            // 重置分页到第一页
+            loginPage = 1;
+            opPage = 1;
 
             // 初始聚合：日
             loginAgg = GroupByBucket(loginAll.Select(x => x.LoginTime), loginBucket);
@@ -326,6 +381,16 @@ else
         StateHasChanged();
     }
 
+    private void ChangeLoginPage(int page)
+    {
+        loginPage = Math.Clamp(page, 1, LoginTotalPages);
+    }
+
+    private void ChangeOpPage(int page)
+    {
+        opPage = Math.Clamp(page, 1, OpTotalPages);
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         try
@@ -335,7 +400,7 @@ else
             {
 #if DEBUG
             // 如果调试期想强制放行，取消下一行注释
-             //_isAdmin = true; _authChecked = true; StateHasChanged(); return;
+             _isAdmin = true; _authChecked = true; StateHasChanged(); return;
 #endif
                 var isLoggedIn = await JS.InvokeAsync<string>("sessionStorage.getItem", "isLoggedIn");
                 var username = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
@@ -344,19 +409,13 @@ else
                             string.Equals(username, "admin", StringComparison.OrdinalIgnoreCase));
                 _authChecked = true;
 
-                // 校验刚完成，需要刷新一次让界面显示“无权访问”或继续走后面的渲染
+                // 校验刚完成，刷新一次让界面显示“无权访问”或继续渲染
                 await InvokeAsync(StateHasChanged);
-                // 结束本轮，等下一轮再根据 _isAdmin 决定是否画图
                 return;
             }
 
-            // ② 非管理员直接不渲染图表（你可以在界面上用条件渲染显示“无权访问”）
-            if (!_isAdmin)
-            {
-                return;
-                // 或者要跳走：
-                // Nav.NavigateTo("/login", true);
-            }
+            // ② 非管理员不渲染图表
+            if (!_isAdmin) return;
 
             // ③ 管理员才渲染图表
             if (_needRenderLoginChart && activeTab == "login")
