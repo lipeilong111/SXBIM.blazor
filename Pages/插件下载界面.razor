@@ -1,4 +1,5 @@
 ﻿@page "/download"
+@using Microsoft.AspNetCore.WebUtilities
 @using SXBIM_Login.Controller
 @using System.Text.Json
 @inject IJSRuntime JS
@@ -207,47 +208,47 @@
 
 
 
-        /* 悬浮只保留阴影效果 */
-        .card:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
-            border-color: #e3e6ea;
-        }
+    /* 悬浮只保留阴影效果 */
+    .card:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+        border-color: #e3e6ea;
+    }
 
-       
 
-        /* 固定的柔和泛光 */
-        .card::after {
-            content: "";
-            position: absolute;
-            inset: -18%;
-            background: radial-gradient(120px 80px at 20% 0%, rgba(59,130,246,0.16), rgba(59,130,246,0) 60%), radial-gradient(160px 120px at 80% 110%, rgba(255,255,255,0.40), rgba(255,255,255,0) 70%);
-            opacity: .55;
-            filter: blur(6px);
-            pointer-events: none;
-            z-index: 0;
-        }
 
-        .card h3 {
-            color: #111827;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            gap: 12px;
-            display: flex;
-            align-items: center;
-            position: relative;
-            z-index: 1; /* 让文字在光效之上 */
-        }
+    /* 固定的柔和泛光 */
+    .card::after {
+        content: "";
+        position: absolute;
+        inset: -18%;
+        background: radial-gradient(120px 80px at 20% 0%, rgba(59,130,246,0.16), rgba(59,130,246,0) 60%), radial-gradient(160px 120px at 80% 110%, rgba(255,255,255,0.40), rgba(255,255,255,0) 70%);
+        opacity: .55;
+        filter: blur(6px);
+        pointer-events: none;
+        z-index: 0;
+    }
 
-        .card p {
-            font-size: 14px;
-            color: #374151;
-            margin: 6px 0;
-            line-height: 1.6;
-            position: relative;
-            z-index: 1;
-        }
+    .card h3 {
+        color: #111827;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        gap: 12px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        z-index: 1; /* 让文字在光效之上 */
+    }
+
+    .card p {
+        font-size: 14px;
+        color: #374151;
+        margin: 6px 0;
+        line-height: 1.6;
+        position: relative;
+        z-index: 1;
+    }
 
 
     /* 平台说明文字 */
@@ -305,6 +306,7 @@
     <h1>三鑫插件下载中心</h1>
     <p>一站式获取三鑫 BIM 工具插件，助力设计与出图效率</p>
     <button class="download-button" @onclick="GoToSXGZL">了解三鑫插件生态</button>
+    <button class="download-button" @onclick="GoToGJJ" style="background-color: #18181B; color:white; left: 10px">线上工具集</button>
 </header>
 
 <div class="section">
@@ -314,7 +316,7 @@
             <div class="changelog">
                 <span class="changelog-badge" tabindex="0">更新日志</span>
                 <div class="changelog-popover">
-                    @foreach (var release in cadLog.Releases.OrderByDescending(r => r.Version))
+                    @foreach (var release in cadLog.Releases)
                     {
                         <div class="changelog-title">@($"---V{release.Version}---")</div>
                         <ul class="changelog-list">
@@ -357,7 +359,7 @@
             <div class="changelog">
                 <span class="changelog-badge" tabindex="0">更新日志</span>
                 <div class="changelog-popover">
-                    @foreach (var release in snailLog.Releases.OrderByDescending(r => r.Version))
+                    @foreach (var release in snailLog.Releases)
                     {
                         <div class="changelog-title">@($"---V{release.Version}---")</div>
                         <ul class="changelog-list">
@@ -509,7 +511,7 @@
         {
             // 相对路径指向 wwwroot/update-log.json
             using var stream = await Http.GetStreamAsync("Protected/changelogs.json");
-            _updateLog = await JsonSerializer.DeserializeAsync<Dictionary<string, UpdateItem>>(stream,new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            _updateLog = await JsonSerializer.DeserializeAsync<Dictionary<string, UpdateItem>>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
         catch (Exception ex)
         {
@@ -628,5 +630,12 @@
     {
         await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000", "_blank");
         await WriteDownloadLog("system", "查看工作流文档");
+    }
+    private async void GoToGJJ()
+    {
+        const string baseUrl = "http://192.168.7.194:3000";
+        var url = QueryHelpers.AddQueryString(baseUrl, "OAuth", "123456");
+        await JS.InvokeVoidAsync("open", url, "_blank");
+        await WriteDownloadLog("system", "线上工具集");
     }
 }
