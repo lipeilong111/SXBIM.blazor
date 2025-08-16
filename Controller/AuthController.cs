@@ -29,6 +29,32 @@ namespace SXBIM_Login.Controller
             return s.Length > maxLen ? s.Substring(0, maxLen) : s;
         }
 
+        public async Task<string> GetRealNameByUsernameAsync(string username)
+        {
+            // 默认返回 null 表示未找到
+            string realName = "null";
+
+            // 从 appsettings.json 读取连接字符串
+            var connStr = _configuration.GetConnectionString("DefaultConnection");
+
+            using var conn = new SqlConnection(connStr);
+            await conn.OpenAsync();
+
+            // 假设表名是 Users，列名分别是 Username / RealName
+            string sql = "SELECT RealName FROM Users WHERE Username = @username";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@username", username);
+
+            var result = await cmd.ExecuteScalarAsync();
+            if (result != null && result != DBNull.Value)
+            {
+                realName = result.ToString();
+            }
+
+            return realName;
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
@@ -200,6 +226,41 @@ namespace SXBIM_Login.Controller
             Console.WriteLine($"[{DateTime.Now}] ------User change password：[{realName}]  原密码: [{req.OldPassword}] -> 新密码: [{req.NewPassword}]");
             return Ok(new { success = true, message = "密码修改成功" });
         }
+
+
+
+        private async Task<string?> LookupRealNameAsync(string username)
+        {
+            var u = Trunc(username, MaxUsernameLen); // 你已有的安全裁剪
+            if (string.IsNullOrEmpty(u)) return null;
+
+            var connStr = _configuration.GetConnectionString("DefaultConnection");
+            await using var conn = new SqlConnection(connStr);
+            await conn.OpenAsync();
+
+            const string sql = "SELECT TOP(1) RealName FROM Users WHERE Username = @u";
+            await using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.Add("@u", SqlDbType.NVarChar, MaxUsernameLen).Value = u;
+
+            var result = await cmd.ExecuteScalarAsync();
+            return result == null || result == DBNull.Value ? null : result.ToString();
+        }
+
+        // 对外暴露的 HTTP 接口：GET /api/auth/realname?username=xxx
+        [HttpGet("realname")]
+        public async Task<ActionResult<string>> GetRealName([FromQuery] string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                return BadRequest("username 不能为空");
+
+            var realName = await LookupRealNameAsync(username);
+            if (string.IsNullOrEmpty(realName))
+                return NotFound(); // 404
+
+            return Ok(realName);
+        }
+
+
     }
 
     public class ChangePasswordRequest
@@ -233,4 +294,6 @@ namespace SXBIM_Login.Controller
             return new HttpClient(handler);
         }
     }
+
+
 }

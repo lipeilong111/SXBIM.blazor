@@ -1,6 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using SXBIM_Login.Controller
+@inherits LayoutComponentBase
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
+@inject HttpClient Http
 
 <!-- ✅ 顶部导航 -->
 <header class="main-header">
@@ -13,7 +15,7 @@
 
         <div class="auth-buttons">
             <div class="user-menu" tabindex="0">
-                <a id="logoutBtn" class="btn btn-logout">@Username  ↓</a>
+                <a id="logoutBtn" class="btn btn-logout">@真实姓名  ↓</a>
                 <ul class="menu">
                     <li onclick="location.href='/account/change-password'">
                         <svg class="menu-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
@@ -35,7 +37,7 @@
 </header>
 
 @code {
-    private string Username = "未登录";
+    private string 真实姓名 = "未登录";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -44,7 +46,7 @@
             var user = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
             if (!string.IsNullOrWhiteSpace(user))
             {
-                Username = user;
+                真实姓名 = await Http.GetStringAsync($"/api/auth/realname?username={Uri.EscapeDataString(user)}");
                 StateHasChanged(); // 通知刷新
             }
         }

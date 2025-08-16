@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.WebUtilities
 @using SXBIM_Login.Controller
 @using System.Text.Json
+@using static System.Net.WebRequestMethods
 @inject IJSRuntime JS
 @inject NavigationManager Nav
 @inject HttpClient Http
@@ -500,6 +501,8 @@
 
 
             await LoadUpdateLog();
+            await 获取真实姓名();
+
 
             StateHasChanged();
         }
@@ -606,35 +609,69 @@
         public string creationTime { get; set; }
     }
 
+    public static string baseUrl = "http://192.168.7.194:3000";
+    public static string FSXUrl = "http://192.168.6.214/excel";
+    public static string Token = "e8Po6(Zzq(N3";
+
+    public static string 真实姓名 = "null";
+
+
+    public async Task 获取真实姓名()
+    {
+        var user = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
+        真实姓名= await Http.GetStringAsync($"/api/auth/realname?username={Uri.EscapeDataString(user)}");
+    }
+
+
+
 
 
     private async void GoToDocsCAD()
     {
-        await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000/docs/SX_Cad_插件使用手册/一、产品简介", "_blank");
+        var url = QueryHelpers.AddQueryString("http://192.168.7.194:3000/docs/SX_Cad_插件使用手册/一、产品简介", new Dictionary<string, string?>
+        {
+            ["OAuth"] = "123456",
+            ["u"] = 真实姓名,            // 会被自动 URL 编码
+        });
+        await JS.InvokeVoidAsync("open", url, "_blank");
         await WriteDownloadLog("cad", "查看cad文档");
         //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
     }
     private async void GoToDocsRHINO()
     {
-        await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000/docs/SX_Snail_插件使用手册/一、产品简介", "_blank");
+        var url = QueryHelpers.AddQueryString("http://192.168.7.194:3000/docs/SX_Snail_插件使用手册/一、产品简介", new Dictionary<string, string?>
+        {
+            ["OAuth"] = "123456",
+            ["u"] = 真实姓名,            // 会被自动 URL 编码
+        });
+        await JS.InvokeVoidAsync("open", url, "_blank");
         await WriteDownloadLog("rhino", "查看rhino文档");
         //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
     }
     private async void GoToDocsREVIT()
     {
-        await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000/docs/SX_Revit_插件使用手册/一、产品简介", "_blank");
+        var url = QueryHelpers.AddQueryString("http://192.168.7.194:3000/docs/SX_Revit_插件使用手册/一、产品简介", new Dictionary<string, string?>
+        {
+            ["OAuth"] = "123456",
+            ["u"] = 真实姓名,            // 会被自动 URL 编码
+        });
+        await JS.InvokeVoidAsync("open", url, "_blank");
         await WriteDownloadLog("revit", "查看revit文档");
         //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
     }
     private async void GoToSXGZL()
     {
-        await JS.InvokeVoidAsync("open", "http://192.168.7.194:3000", "_blank");
+        var url = QueryHelpers.AddQueryString(baseUrl, new Dictionary<string, string?>
+        {
+            ["OAuth"] = "123456",
+            ["u"] = 真实姓名,            // 会被自动 URL 编码
+        });
+        await JS.InvokeVoidAsync("open", url, "_blank");
         await WriteDownloadLog("system", "查看工作流文档");
     }
     private async void GoToGJJ()
     {
-        const string baseUrl = "http://192.168.7.194:3000";
-        var url = QueryHelpers.AddQueryString(baseUrl, "OAuth", "123456");
+        var url = QueryHelpers.AddQueryString(FSXUrl, "OAuth", Token);
         await JS.InvokeVoidAsync("open", url, "_blank");
         await WriteDownloadLog("system", "线上工具集");
     }
