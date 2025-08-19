@@ -436,41 +436,37 @@
     </div>
 </div>
 
+@using System.Text.Json
+@using Microsoft.AspNetCore.WebUtilities
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationManager Nav
+@implements IDisposable
+
 @code {
-    // 更新日志（wwwroot/update-log.json）
-    private Dictionary<string, UpdateItem> _updateLog;
+    // ================================
+    // 基础状态 & 类型
+    // ================================
+    private bool _checked = false;                 // 首次渲染标记
+    private bool _disposed = false;               // 组件销毁标记
+    private readonly CancellationTokenSource _cts = new(); // 统一取消令牌
+
+    // 更新日志（Protected/changelogs.json）
+    private Dictionary<string, UpdateItem>? _updateLog;
 
     public class UpdateItem
     {
-        public string Name { get; set; }
-        public List<ReleaseInfo> Releases { get; set; }
+        public string? Name { get; set; }
+        public List<ReleaseInfo>? Releases { get; set; }
     }
 
     public class ReleaseInfo
     {
-        public string Version { get; set; }
-        public List<string> Notes { get; set; }
+        public string? Version { get; set; }
+        public List<string>? Notes { get; set; }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private bool _checked = false;
-
+    // 插件版本信息
     private string cadVersion = "";
     private string cadUpdateDate = "";
 
@@ -480,41 +476,117 @@
     private string revitVersion = "";
     private string revitUpdateDate = "";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    // 业务模型
+    public class PluginInfo
+    {
+        public string? version { get; set; }
+        public string? creationTime { get; set; }
+    }
+
+    public class LogRequest
+    {
+        public string? Username { get; set; }
+        public string? Action { get; set; }
+        public string? App { get; set; }
+    }
+
+    // 常量
+    private const string baseUrl = "http://192.168.7.194:3000";
+    private const string FSXUrl = "http://192.168.6.214/excel";
+    private const string Token = "e8Po6(Zzq(N3";
+
+    // 真实姓名不要 static，避免不同用户串值
+    private string? 真实姓名 = null;
+
+    // ================================
+    // 生命周期
+    // ================================
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !_checked)
         {
             _checked = true;
+            _ = InitializeAsync(); // 后台初始化，避免在渲染周期内长 await
+        }
+        return Task.CompletedTask;
+    }
 
-            var isLoggedIn = await JS.InvokeAsync<string>("sessionStorage.getItem", "isLoggedIn");
-            if (isLoggedIn != "true")
+    private async Task InitializeAsync()
+    {
+        try
+        {
+            // 登录校验（JS 互操作可能在断线时抛异常，需捕获）
+            string? isLoggedIn = null;
+            try
             {
-#if DEBUG
-#else
-                Nav.NavigateTo("/login", true);
-#endif
+                isLoggedIn = await JS.InvokeAsync<string>("sessionStorage.getItem", "isLoggedIn");
+            }
+            catch (Microsoft.JSInterop.JSDisconnectedException)
+            {
+                return; // 电路断开，直接结束初始化
+            }
+            catch (TaskCanceledException)
+            {
+                return;
             }
 
+#if !DEBUG
+            if (isLoggedIn != "true")
+            {
+                if (_disposed || _cts.IsCancellationRequested) return;
+                Nav.NavigateTo("/login", true);
+                return;
+            }
+#endif
+
+            // 拉取插件信息（串行更稳；如需可改 Task.WhenAll）
             await LoadPluginInfo("cad");
             await LoadPluginInfo("rhino");
             await LoadPluginInfo("revit");
 
-
+            // 更新日志
             await LoadUpdateLog();
+
+            // 获取真实姓名（内部已做断线与取消防护）
             await 获取真实姓名();
 
-
-            StateHasChanged();
+            if (!_disposed && !_cts.IsCancellationRequested)
+            {
+                await InvokeAsync(StateHasChanged);
+            }
         }
-
+        catch (Microsoft.JSInterop.JSDisconnectedException)
+        {
+            // 忽略：用户刷新/断线
+        }
+        catch (TaskCanceledException)
+        {
+            // 忽略：组件销毁/导航取消
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ 初始化失败: {ex.Message}");
+        }
     }
+
+    // ================================
+    // 数据加载
+    // ================================
     private async Task LoadUpdateLog()
     {
         try
         {
-            // 相对路径指向 wwwroot/update-log.json
-            using var stream = await Http.GetStreamAsync("Protected/changelogs.json");
-            _updateLog = await JsonSerializer.DeserializeAsync<Dictionary<string, UpdateItem>>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            // 注意：实际文件路径为 Protected/changelogs.json
+            await using var stream = await Http.GetStreamAsync("Protected/changelogs.json", _cts.Token);
+            _updateLog = await JsonSerializer.DeserializeAsync<Dictionary<string, UpdateItem>>(
+                stream,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true },
+                _cts.Token
+            );
+        }
+        catch (TaskCanceledException)
+        {
+            // 忽略
         }
         catch (Exception ex)
         {
@@ -522,80 +594,43 @@
         }
     }
 
-
-    private async Task DownloadMultiple()
-    {
-        await JS.InvokeVoidAsync("downloadMultipleFiles");
-        await WriteDownloadLog("rhino", "_download_");
-    }
-    private async Task downloadCAD()
-    {
-        await JS.InvokeVoidAsync("downloadCAD");
-        await WriteDownloadLog("cad", "_download_");
-    }
-    private async Task downloadRevit()
-    {
-        await JS.InvokeVoidAsync("downloadRevit");
-        await WriteDownloadLog("revit", "_download_");
-    }
-
-
-    private async Task WriteDownloadLog(string Appname, string Action)
-    {
-        var user = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
-        var log = new LogRequest
-        {
-            Username = user == null ? "null" : user,
-            Action = Action,
-            App = Appname
-        };
-
-        var client = 请求方法.CreateUnsafeClient(); // 自定义不验证证书的 HttpClient
-        var response = await client.PostAsJsonAsync(请求方法.UrlIP + "/api/auth/write", log);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            Console.WriteLine($"❌ 日志写入失败: {response.StatusCode}");
-        }
-    }
-
-
-
     private async Task LoadPluginInfo(string plugin)
     {
         try
         {
-            var client = 请求方法.CreateUnsafeClient();
-            var response = await client.GetAsync(请求方法.UrlIP + "/api/download/file-info?plugin=" + plugin);
-            if (response.IsSuccessStatusCode)
+            var client = 请求方法.CreateUnsafeClient(); // 你的自定义 HttpClient
+            var url = 请求方法.UrlIP + "/api/download/file-info?plugin=" + plugin;
+            using var response = await client.GetAsync(url, _cts.Token);
+            if (!response.IsSuccessStatusCode) return;
+
+            var json = await response.Content.ReadAsStringAsync(_cts.Token);
+            var info = JsonSerializer.Deserialize<PluginInfo>(json, new JsonSerializerOptions
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var info = JsonSerializer.Deserialize<PluginInfo>(json, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                PropertyNameCaseInsensitive = true
+            });
 
-                if (info != null)
+            if (info != null)
+            {
+                switch (plugin)
                 {
-                    switch (plugin)
-                    {
-                        case "cad":
-                            cadVersion = info.version;
-                            cadUpdateDate = info.creationTime;
-                            break;
-                        case "rhino":
-                            rhinoVersion = info.version;
-                            rhinoUpdateDate = info.creationTime;
-                            break;
-                        case "revit":
-                            revitVersion = info.version;
-                            revitUpdateDate = info.creationTime;
-                            break;
-                    }
-
-                    StateHasChanged();
+                    case "cad":
+                        cadVersion = info.version ?? "";
+                        cadUpdateDate = info.creationTime ?? "";
+                        break;
+                    case "rhino":
+                        rhinoVersion = info.version ?? "";
+                        rhinoUpdateDate = info.creationTime ?? "";
+                        break;
+                    case "revit":
+                        revitVersion = info.version ?? "";
+                        revitUpdateDate = info.creationTime ?? "";
+                        break;
                 }
             }
+        }
+        catch (TaskCanceledException)
+        {
+            // 忽略
         }
         catch (Exception ex)
         {
@@ -603,77 +638,180 @@
         }
     }
 
-    public class PluginInfo
-    {
-        public string version { get; set; }
-        public string creationTime { get; set; }
-    }
-
-    public static string baseUrl = "http://192.168.7.194:3000";
-    public static string FSXUrl = "http://192.168.6.214/excel";
-    public static string Token = "e8Po6(Zzq(N3";
-
-    public static string 真实姓名 = "null";
-
-
     public async Task 获取真实姓名()
     {
-        var user = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
-        if(user == null) return;
-        真实姓名= await Http.GetStringAsync($"/api/auth/realname?username={Uri.EscapeDataString(user)}");
-    }
-
-
-
-
-
-    private async void GoToDocsCAD()
-    {
-        var url = QueryHelpers.AddQueryString("http://192.168.7.194:3000/docs/SX_Cad_插件使用手册/一、产品简介", new Dictionary<string, string?>
+        try
         {
-            ["OAuth"] = "123456",
-            ["u"] = 真实姓名,            // 会被自动 URL 编码
-        });
-        await JS.InvokeVoidAsync("open", url, "_blank");
-        await WriteDownloadLog("cad", "查看cad文档");
-        //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
-    }
-    private async void GoToDocsRHINO()
-    {
-        var url = QueryHelpers.AddQueryString("http://192.168.7.194:3000/docs/SX_Snail_插件使用手册/一、产品简介", new Dictionary<string, string?>
+            var user = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
+            if (string.IsNullOrWhiteSpace(user) || _disposed || _cts.IsCancellationRequested) return;
+
+            var encoded = Uri.EscapeDataString(user);
+            真实姓名 = await Http.GetStringAsync($"/api/auth/realname?username={encoded}", _cts.Token);
+            if (string.IsNullOrWhiteSpace(真实姓名)) 真实姓名 = null;
+        }
+        catch (Microsoft.JSInterop.JSDisconnectedException)
         {
-            ["OAuth"] = "123456",
-            ["u"] = 真实姓名,            // 会被自动 URL 编码
-        });
-        await JS.InvokeVoidAsync("open", url, "_blank");
-        await WriteDownloadLog("rhino", "查看rhino文档");
-        //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
-    }
-    private async void GoToDocsREVIT()
-    {
-        var url = QueryHelpers.AddQueryString("http://192.168.7.194:3000/docs/SX_Revit_插件使用手册/一、产品简介", new Dictionary<string, string?>
+            // 电路断开：忽略
+        }
+        catch (TaskCanceledException)
         {
-            ["OAuth"] = "123456",
-            ["u"] = 真实姓名,            // 会被自动 URL 编码
-        });
-        await JS.InvokeVoidAsync("open", url, "_blank");
-        await WriteDownloadLog("revit", "查看revit文档");
-        //Nav.NavigateTo("http://192.168.7.194:3000/docs", forceLoad: true);
-    }
-    private async void GoToSXGZL()
-    {
-        var url = QueryHelpers.AddQueryString(baseUrl, new Dictionary<string, string?>
+            // 组件销毁/导航取消：忽略
+        }
+        catch (Exception ex)
         {
-            ["OAuth"] = "123456",
-            ["u"] = 真实姓名,            // 会被自动 URL 编码
-        });
-        await JS.InvokeVoidAsync("open", url, "_blank");
-        await WriteDownloadLog("system", "查看工作流文档");
+            Console.WriteLine($"❌ 获取真实姓名失败: {ex.Message}");
+        }
     }
-    private async void GoToGJJ()
+
+    // ================================
+    // 下载 & 日志
+    // ================================
+    private async Task DownloadMultiple()
     {
-        var url = QueryHelpers.AddQueryString(FSXUrl, "OAuth", Token);
-        await JS.InvokeVoidAsync("open", url, "_blank");
-        await WriteDownloadLog("system", "线上工具集");
+        try
+        {
+            await JS.InvokeVoidAsync("downloadMultipleFiles");
+            await WriteDownloadLog("rhino", "_download_");
+        }
+        catch (Microsoft.JSInterop.JSDisconnectedException) { }
+    }
+
+    private async Task downloadCAD()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("downloadCAD");
+            await WriteDownloadLog("cad", "_download_");
+        }
+        catch (Microsoft.JSInterop.JSDisconnectedException) { }
+    }
+
+    private async Task downloadRevit()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("downloadRevit");
+            await WriteDownloadLog("revit", "_download_");
+        }
+        catch (Microsoft.JSInterop.JSDisconnectedException) { }
+    }
+
+    private async Task WriteDownloadLog(string appName, string action)
+    {
+        try
+        {
+            var user = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
+            var log = new LogRequest
+            {
+                Username = string.IsNullOrWhiteSpace(user) ? "anonymous" : user,
+                Action = action,
+                App = appName
+            };
+
+            var client = 请求方法.CreateUnsafeClient(); // 自定义不验证证书的 HttpClient
+            using var resp = await client.PostAsJsonAsync(请求方法.UrlIP + "/api/auth/write", log, _cts.Token);
+            if (!resp.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"❌ 日志写入失败: {resp.StatusCode}");
+            }
+        }
+        catch (TaskCanceledException) { }
+        catch (Microsoft.JSInterop.JSDisconnectedException) { }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ 写入下载日志异常: {ex.Message}");
+        }
+    }
+
+    // ================================
+    // 跳转（事件处理：async Task）
+    // ================================
+    private async Task GoToDocsCAD()
+    {
+        try
+        {
+            var url = QueryHelpers.AddQueryString(
+                $"{baseUrl}/docs/SX_Cad_插件使用手册/一、产品简介",
+                new Dictionary<string, string?>
+                {
+                    ["OAuth"] = "123456",
+                    ["u"] = 真实姓名 ?? ""
+                });
+            await JS.InvokeVoidAsync("open", url, "_blank");
+            await WriteDownloadLog("cad", "查看cad文档");
+        }
+        catch (Microsoft.JSInterop.JSDisconnectedException) { }
+    }
+
+    private async Task GoToDocsRHINO()
+    {
+        try
+        {
+            var url = QueryHelpers.AddQueryString(
+                $"{baseUrl}/docs/SX_Snail_插件使用手册/一、产品简介",
+                new Dictionary<string, string?>
+                {
+                    ["OAuth"] = "123456",
+                    ["u"] = 真实姓名 ?? ""
+                });
+            await JS.InvokeVoidAsync("open", url, "_blank");
+            await WriteDownloadLog("rhino", "查看rhino文档");
+        }
+        catch (Microsoft.JSInterop.JSDisconnectedException) { }
+    }
+
+    private async Task GoToDocsREVIT()
+    {
+        try
+        {
+            var url = QueryHelpers.AddQueryString(
+                $"{baseUrl}/docs/SX_Revit_插件使用手册/一、产品简介",
+                new Dictionary<string, string?>
+                {
+                    ["OAuth"] = "123456",
+                    ["u"] = 真实姓名 ?? ""
+                });
+            await JS.InvokeVoidAsync("open", url, "_blank");
+            await WriteDownloadLog("revit", "查看revit文档");
+        }
+        catch (Microsoft.JSInterop.JSDisconnectedException) { }
+    }
+
+    private async Task GoToSXGZL()
+    {
+        try
+        {
+            var url = QueryHelpers.AddQueryString(
+                baseUrl,
+                new Dictionary<string, string?>
+                {
+                    ["OAuth"] = "123456",
+                    ["u"] = 真实姓名 ?? ""
+                });
+            await JS.InvokeVoidAsync("open", url, "_blank");
+            await WriteDownloadLog("system", "查看工作流文档");
+        }
+        catch (Microsoft.JSInterop.JSDisconnectedException) { }
+    }
+
+    private async Task GoToGJJ()
+    {
+        try
+        {
+            var url = QueryHelpers.AddQueryString(FSXUrl, "OAuth", Token);
+            await JS.InvokeVoidAsync("open", url, "_blank");
+            await WriteDownloadLog("system", "线上工具集");
+        }
+        catch (Microsoft.JSInterop.JSDisconnectedException) { }
+    }
+
+    // ================================
+    // 释放
+    // ================================
+    public void Dispose()
+    {
+        _disposed = true;
+        try { _cts.Cancel(); } catch { /* ignore */ }
+        _cts.Dispose();
     }
 }
