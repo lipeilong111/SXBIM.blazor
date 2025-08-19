@@ -619,6 +619,7 @@
     public async Task 获取真实姓名()
     {
         var user = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
+        if(user == null) return;
         真实姓名= await Http.GetStringAsync($"/api/auth/realname?username={Uri.EscapeDataString(user)}");
     }
 
